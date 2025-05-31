@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image, Button } from 'react-native';
 const MyPage = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.name}>熊谷 琉ニ</Text>
+            <Text style={styles.name}>ダニエル</Text>
             <Text style={styles.bio}>20歳 東京/新宿</Text>
             <Text style={styles.bio}>バスケ 🏀</Text>
             <Button title="Edit Profile" onPress={() => alert('Edit Profile')} />

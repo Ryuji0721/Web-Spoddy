@@ -1,78 +1,119 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 
-interface Message {
-    id: string;
-    text: string;
+const ChatTabs = () => {
+  const roomCount = 6;
+
+  const [messages, setMessages] = useState<Array<Array<{ text: string; sender: string }>>>(
+    () => Array.from({ length: roomCount }, () => [])
+  );
+
+  const [inputs, setInputs] = useState(() => Array(roomCount).fill(''));
+  const [visible, setVisible] = useState(() => Array(roomCount).fill(true));
+
+  const handleSend = (index: number) => {
+    if (!inputs[index].trim()) return;
+    const newMessages = [...messages];
+    newMessages[index] = [...newMessages[index], { text: inputs[index], sender: 'You' }];
+    setMessages(newMessages);
+
+    const newInputs = [...inputs];
+    newInputs[index] = '';
+    setInputs(newInputs);
+  };
+
+  const toggleVisibility = (index: number) => {
+    const newVisible = [...visible];
+    setVisible(newVisible);
+  };
+
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        {Array.from({ length: roomCount }).map((_, i) => (
+          <View style={styles.header} key={i}>
+            <TouchableOpacity style={styles.room} onPress={() => toggleVisibility(i)}>
+                <Image source={require('@/assets/images/kumagai.jpg')} style={styles.Image} />
+                <Text style={styles.title}>渋谷 バスケットコート {i + 1}</Text>               
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
 }
 
-const ChatScreen: React.FC = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [inputText, setInputText] = useState('');
-
-    const sendMessage = () => {
-        if (inputText.trim()) {
-            const newMessage: Message = {
-                id: Date.now().toString(),
-                text: inputText,
-            };
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-            setInputText('');
-        }
-    };
-
-    return (
-        <View style={styles.container}>
-            <FlatList
-                data={messages}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.messageContainer}>
-                        <Text style={styles.messageText}>{item.text}</Text>
-                    </View>
-                )}
-            />
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    value={inputText}
-                    onChangeText={setInputText}
-                    placeholder="Type a message..."
-                />
-                <Button title="Send" onPress={sendMessage} />
-            </View>
-        </View>
-    );
-};
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-        backgroundColor: '#fff',
+  container: {
+    flex: 1,
+    padding: 0,
+    backgroundColor: '#f8f8f8',
+    paddingTop: 100,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 0,
+  },
+    Image: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginRight: 16,
     },
-    messageContainer: {
-        marginVertical: 5,
-        padding: 10,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 5,
-    },
-    messageText: {
-        fontSize: 16,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    input: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginRight: 10,
-    },
+  room: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    height: 100,
+    paddingLeft: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 0,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  toggleButton: {
+    color: '#007BFF',
+    textDecorationLine: 'underline',
+  },
+  messagesContainer: {
+    maxHeight: 120,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
+  },
+  message: {
+    marginBottom: 4,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 8,
+    marginRight: 8,
+  },
+  sendButton: {
+    backgroundColor: '#007BFF',
+    borderRadius: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  sendButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
 
-export default ChatScreen;
+export default ChatTabs;
