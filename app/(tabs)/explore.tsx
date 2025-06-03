@@ -72,7 +72,7 @@ export default function ExploreScreen() {
     });
 
     if (!result.canceled) {
-      setImages((prevImages) => [...prevImages, result.uri]);
+      setImages((prevImages) => [...prevImages, result.assets[0].uri]);
     }
   };
 
