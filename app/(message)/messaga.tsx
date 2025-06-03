@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context';
 
 const Chat = () => {
   const navigation = useNavigation();
@@ -56,7 +57,7 @@ const Chat = () => {
             </View>
           ))}
         </ScrollView>
-
+          <SafeAreaView>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -68,6 +69,7 @@ const Chat = () => {
           />
           <Button title="送信" onPress={handleSendMessage} />
         </View>
+        </SafeAreaView>
       </View>
     </KeyboardAvoidingView>
   );
