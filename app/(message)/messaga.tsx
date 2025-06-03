@@ -45,7 +45,7 @@ const Chat = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>っっっっっg</Text>
+        <Text style={styles.title}>バスケ同好会</Text>
         <ScrollView
           style={{maxHeight: '80%', paddingHorizontal: 20,}}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
