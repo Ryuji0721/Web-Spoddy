@@ -1,7 +1,7 @@
 // App.tsx (または App.js)
 
 import React, { useState } from 'react';
-import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Image } from 'react-native';
 
 export default function App() {
   // 入力フィールドの値を管理するState
@@ -9,6 +9,7 @@ export default function App() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   // 送信された名前を表示するためのState
+  const [selfIntroduction, setSelfIntroduction] = useState('');
   const [submittedName, setSubmittedName] = useState('');
 
   // ボタンが押されたときのハンドラ
@@ -30,42 +31,66 @@ export default function App() {
     >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>Spoddy</Text>
-          <Text style={[styles.label, { textAlign: 'center' }]}>
-            一緒にスポーツを楽しむ仲間を見つけよう
-          </Text>
-
-          
+        <Text style={styles.title}>プロフィール設定</Text>
+            {/*プロフィールの画像を選択できるようにしたいかも*/ }
+        <Image source={require('../../assets/images/kumagai.jpg')} style={styles.image} />
 
           {/* 名前入力フィールド */}
-          <Text style={styles.label}></Text>
+          <Text style={styles.label}>お名前</Text>
           <TextInput
             style={styles.input}
             onChangeText={setName} // 入力が変更されるたびに`name`ステートを更新
             value={name}         // `name`ステートの値を表示
-            placeholder="メールアドレス"
+            placeholder="佐藤 正孝"
             keyboardType="default" // デフォルトのキーボード
             autoCapitalize="words" // 各単語の先頭を大文字に
             autoCorrect={false}   // 入力中の自動修正を無効に
             returnKeyType="done"  // キーボードのEnterキーのラベル
           />
 
-          {/* パスワード入力フィールド */}
+<Text style={styles.label}>都道府県</Text>
+          {/*　都道府県フィールド */}
           <TextInput
             style={styles.input}
             onChangeText={setPassword} // 入力が変更されるたびに`name`ステートを更新
             value={password}    // `name`ステートの値を表示
-            placeholder="パスワード"
+            placeholder="都道府県選択"
             keyboardType="default" // デフォルトのキーボード
             autoCapitalize="words" // 各単語の先頭を大文字に
             autoCorrect={false}   // 入力中の自動修正を無効に
             returnKeyType="done"  // キーボードのEnterキーのラベル
+          />
+
+ {/*　市区町村フィールド */}
+ <Text style={styles.label}>市区町村</Text>
+<TextInput
+            style={styles.input}
+            onChangeText={setPassword} // 入力が変更されるたびに`name`ステートを更新
+            value={password}    // `name`ステートの値を表示
+            placeholder="市区町村を選択"
+            keyboardType="default" // デフォルトのキーボード
+            autoCapitalize="words" // 各単語の先頭を大文字に
+            autoCorrect={false}   // 入力中の自動修正を無効に
+            returnKeyType="done"  // キーボードのEnterキーのラベル
+          />
+
+<Text style={styles.label}>自己紹介</Text>
+<TextInput
+          
+            style={styles.selfIntroduction}
+            onChangeText={setSelfIntroduction}
+            value={selfIntroduction}
+            multiline
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect={false}
+            returnKeyType="done"
           />
 
           {/* 送信ボタン */}
           <View style={{ backgroundColor: '#DE5656', borderRadius: 8 ,  width: '80%' }}>
             <Button
-              title="ログイン"
+              title="アカウント作成"
               onPress={handleSubmit} // ボタンが押されたら`handleSubmit`関数を実行
               color="#FFFFFF" // ボタンの色 
             />
@@ -78,9 +103,12 @@ export default function App() {
               <Text style={styles.submittedNameText}>{submittedName}</Text>
             </View>
           ) : null}
-
-          
-        <Text style={styles.link}>アカウントをお持ちでない方はこちら</Text>
+{selfIntroduction ? (
+            <View style={styles.resultContainer}>
+              <Text style={styles.resultText}>自己紹介:</Text>
+              <Text style={styles.submittedNameText}>{selfIntroduction}</Text>
+            </View>
+          ) : null}
         </ScrollView>
        
       </SafeAreaView>
@@ -98,7 +126,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1, // コンテンツが少ない場合でもScrollViewがフルサイズになるように
-    justifyContent: 'center',
+    paddingTop: '5%',
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#fff',
@@ -107,17 +135,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 30,
+    marginBottom: 10,
     color: '#DE5656',
   },
   // labelのスタイル
   label: {
     fontSize: 16,
     marginBottom: 8,
-    alignSelf: 'flex-start', // ラベルを左寄せに
-    width: '100%', 
+    alignSelf: 'flex-start', 
+    paddingLeft: '10%',// ラベルを左寄せに
     color: '#555',
-    textAlign: 'center', // 中央寄せ
+    fontWeight: 'bold', // ラベルを太字に
   },
   // linkのスタイル
   link: {
@@ -164,4 +192,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#28a745',
   },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginTop: 20,
+  },
+    selfIntroduction: {
+        height: 100,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 15,
+        width: '80%',
+        marginBottom: 20,
+        backgroundColor: '#f0f0f0',
+        fontSize: 16,
+        color: '#333',
+        textAlignVertical: 'top', // テキスト入力の開始位置を上に
+    },
 });
