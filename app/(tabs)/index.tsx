@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function App() {
   // 入力フィールドの値を管理するState
@@ -78,8 +79,11 @@ export default function App() {
           <View style={{ backgroundColor: '#DE5656', borderRadius: 8 ,  width: '80%' }}>
             <Button
               title="アカウントを登録"
-              onPress={handleSubmit} // ボタンが押されたら`handleSubmit`関数を実行
-              color="#FFFFFF" // ボタンの色 
+              onPress={() => {
+                const router = useRouter();
+                router.push({ pathname: '/start/plofileSetting', params: { id: '1' } });
+              }}
+              color="#FFFFFF" // ボタンの色
             />
           </View>
 
