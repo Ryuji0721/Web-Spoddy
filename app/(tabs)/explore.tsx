@@ -1,110 +1,235 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+export default function ExploreScreen() {
+  const [formData, setFormData] = useState({
+    prefecture: '',
+    city: '',
+    dateTime: '',
+    participants: '',
+    description: '',
+  });
 
-export default function TabTwoScreen() {
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log('フォームデータ:', formData);
+    alert('募集内容を送信しました！');
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* ヘッダー */}
+      <View style={styles.header}>
+        <TouchableOpacity>
+          <Text style={styles.closeButton}>×</Text>
+        </TouchableOpacity>
+        <View style={styles.headerLeft}>
+          <Image source={require('../../assets/placeholder.png')} style={styles.avatar} />
+          <View>
+            <Text style={styles.userName}>目黒はるき</Text>
+            <Text style={styles.postDate}>投稿日：2025年12月25日</Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>投稿する</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.tagRow}>
+        <Text style={styles.tag}>📍 東京都渋谷区</Text>
+        <Text style={styles.tag}>📅 2025年6月5日</Text>
+        <Text style={styles.tag}>🕒 13:00時</Text>
+      </View>
+
+      {/* フォーム */}
+      <View style={styles.formContainer}>
+        <View style={styles.row}>
+          <Picker
+            selectedValue={formData.prefecture}
+            style={styles.picker}
+            onValueChange={(value) => handleInputChange('prefecture', value)}
+          >
+            <Picker.Item label="都道府県" value="" />
+            <Picker.Item label="東京都" value="東京都" />
+            <Picker.Item label="大阪府" value="大阪府" />
+            {/* 他の都道府県を追加 */}
+          </Picker>
+          <Picker
+            selectedValue={formData.city}
+            style={styles.picker}
+            onValueChange={(value) => handleInputChange('city', value)}
+          >
+            <Picker.Item label="市区町村" value="" />
+            <Picker.Item label="渋谷区" value="渋谷区" />
+            <Picker.Item label="新宿区" value="新宿区" />
+            {/* 他の市区町村を追加 */}
+          </Picker>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="日付と時間帯"
+          value={formData.dateTime}
+          onChangeText={(text) => handleInputChange('dateTime', text)}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+        <TextInput
+          style={styles.input}
+          placeholder="募集人数"
+          value={formData.participants}
+          onChangeText={(text) => handleInputChange('participants', text)}
+        />
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="入力してください。"
+          value={formData.description}
+          onChangeText={(text) => handleInputChange('description', text)}
+          multiline
+        />
+        <View style={styles.imageUploadRow}>
+          {[0, 1, 2].map((_, index) => (
+            <TouchableOpacity key={index} style={styles.imageUploadBox}>
+              <Text style={styles.cameraIcon}>📷</Text>
+              <Text style={styles.plusIcon}>＋</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flexGrow: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
   },
-  titleContainer: {
+  header: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    marginTop: 30,
+  },
+  closeButton: {
+    fontSize: 24,
+    color: '#000',
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  postDate: {
+    fontSize: 12,
+    color: '#666',
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  submitButton: {
+    backgroundColor: '#FF5A5F',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  submitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  tagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
+    marginVertical: 8,
+  },
+  tag: {
+    backgroundColor: '#E0E0E0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    fontSize: 12,
+  },
+  formContainer: {
+    backgroundColor: '#F9F9F9',
+    borderRadius: 8,
+    padding: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  picker: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginHorizontal: 4,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  imageUploadRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  imageUploadBox: {
+    width: '30%',
+    aspectRatio: 1,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cameraIcon: {
+    fontSize: 20,
+    color: '#999',
+  },
+  plusIcon: {
+    fontSize: 24,
+    color: '#999',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  participants: {
+    fontSize: 14,
+    color: '#444',
+  },
+  chatButton: {
+    backgroundColor: '#FF5A5F',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+  },
+  chatButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
