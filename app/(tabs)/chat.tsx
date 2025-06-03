@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const ChatTabs = () => {
   const roomCount = 6;
+
+  const router = useRouter();
 
   const [messages, setMessages] = useState<Array<Array<{ text: string; sender: string }>>>(
     () => Array.from({ length: roomCount }, () => [])
@@ -32,7 +35,7 @@ const ChatTabs = () => {
       <ScrollView>
         {Array.from({ length: roomCount }).map((_, i) => (
           <View style={styles.header} key={i}>
-            <TouchableOpacity style={styles.room} onPress={() => toggleVisibility(i)}>
+            <TouchableOpacity style={styles.room} onPress={() => router.push({ pathname: '/(message)/messaga', params: { id: (i + 1).toString() } })}>
                 <Image source={require('@/assets/images/kumagai.jpg')} style={styles.Image} />
                 <Text style={styles.title}>渋谷 バスケットコート {i + 1}</Text>               
             </TouchableOpacity>
