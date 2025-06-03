@@ -1,43 +1,92 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Button } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, Button } from 'react-native';
 
 const MyPage = () => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.name}>ダニエル</Text>
-            <Text style={styles.bio}>20歳 東京/新宿</Text>
-            <Text style={styles.bio}>バスケ 🏀</Text>
-            <Button title="Edit Profile" onPress={() => alert('Edit Profile')} />
-        </View>
+        <ScrollView contentContainerStyle={styles.container}>
+            <Image source={require('@/assets/images/kumagai.jpg')} style={styles.Image} />
+            <View style={styles.status}>
+                <Text style={styles.name}>ダニエル</Text>
+                <Text style={styles.bio}>東京都/新宿区</Text>
+                {/* ?ここにプロフィールの詳細や趣味などを追加できます */}
+                {/*<Text style={styles.good}>いいね</Text>*/}
+                <Text style={styles.selfIntroduction}>自己紹介</Text>
+                <Text style={styles.selfIntroductionMessage}>
+                    バスケットボールが大好きで、毎週末に友達とプレイしています。新しい友達を作りたいです！
+                </Text>
+            </View>
+            <View style={styles.edit}>
+                    <Button title="情報を編集する" color="white" onPress={() => alert('変更画面はまた今度ね')} />
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    Image:{
+        width: '96%',
+        height: 372,
+        borderTopLeftRadius: 14,
+        borderTopRightRadius: 14,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        marginBottom: 20,
+    },
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#f5f5f5',
     },
-    profileImage: {
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-        marginBottom: 20,
+    status: {
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        padding: 20,
+        borderRadius: 14,
+        width: '90%',
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     name: {
-        fontSize: 40,
+        fontSize: 32,
         fontWeight: 'bold',
         marginBottom: 10,
         textAlign: 'left',
     },
     bio: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#666',
         textAlign: 'center',
-        marginHorizontal: 20,
+        lineHeight: 30,
+    },
+    good: {
+        fontSize: 18,
+        color: '#DE5656',
         marginBottom: 20,
     },
+    selfIntroduction: {
+        fontSize: 22,/* 36.082% */
+        fontWeight: 'bold',
+    },
+    selfIntroductionMessage: {
+        marginTop: 10,
+        borderWidth: 1,
+        borderRadius: 6,
+        padding: 10,
+        borderColor: '#D0D0D0',
+        fontSize: 16,
+        color: '#333',
+        lineHeight: 24,
+    },
+    edit:{
+        marginTop: 0,
+        backgroundColor: '#DE5656',
+        color: '#fff',
+        padding: 5,
+        borderRadius: 16,
+        width: '50%',
+    }
 });
 
 export default MyPage;
