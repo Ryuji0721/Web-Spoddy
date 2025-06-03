@@ -10,7 +10,6 @@
     "web": "expo start --web",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
-  
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-native-picker/picker": "^2.11.0",
@@ -35,7 +34,10 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.2",
+<<<<<<< HEAD
     "react-native-collapsible": "^1.6.2",
+=======
+>>>>>>> 0849e68 (fix:投稿ページ)
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-modal-selector": "^2.1.2",
