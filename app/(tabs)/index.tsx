@@ -23,6 +23,9 @@ export default function App() {
     Alert.alert('送信完了', `入力された名前: ${name}`);
   };
 
+  {/* Use handleSubmit in the button */}
+  {/* Move this code inside the return statement */}
+
   return (
     // キーボードが表示されたときにUIが隠れないように調整
     <KeyboardAvoidingView
