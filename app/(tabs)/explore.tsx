@@ -10,6 +10,8 @@ import {
   Image,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
+  Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Collapsible from "react-native-collapsible";
@@ -33,6 +35,16 @@ const cities: Record<string, string[]> = {
   福岡県: ["福岡市", "北九州市", "久留米市", "大牟田市", "その他"]
 };
 
+interface CustomDropdownProps {
+  isVisible: boolean;
+  onClose: () => void;
+  options: string[];
+  onSelect: (value: string) => void;
+  placeholder: string;
+  selectedValue: string;
+  disabled?: boolean;
+}
+
 export default function ExploreScreen() {
   const [formData, setFormData] = useState({
     prefecture: "",
@@ -42,18 +54,18 @@ export default function ExploreScreen() {
     description: "",
   });
 
-  const [isPrefectureAccordionOpen, setIsPrefectureAccordionOpen] = useState(false);
-  const [isCityAccordionOpen, setIsCityAccordionOpen] = useState(false);
+  const [isPrefectureModalVisible, setPrefectureModalVisible] = useState(false);
+  const [isCityModalVisible, setCityModalVisible] = useState(false);
   const [images, setImages] = useState<string[]>([]);
 
   const handlePrefectureChange = (value: string) => {
     setFormData((prev) => ({ ...prev, prefecture: value, city: "" }));
-    setIsPrefectureAccordionOpen(false);
+    setPrefectureModalVisible(false);
   };
 
   const handleCityChange = (value: string) => {
     setFormData((prev) => ({ ...prev, city: value }));
-    setIsCityAccordionOpen(false);
+    setCityModalVisible(false);
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -118,6 +130,62 @@ export default function ExploreScreen() {
 
   const availableCities = formData.prefecture ? cities[formData.prefecture] || [] : [];
 
+  const CustomDropdown = ({ 
+    isVisible, 
+    onClose, 
+    options, 
+    onSelect, 
+    placeholder, 
+    selectedValue,
+    disabled = false 
+  }: CustomDropdownProps) => (
+    <Modal
+      visible={isVisible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <View style={styles.dropdownHeader}>
+                <Text style={styles.dropdownHeaderText}>{placeholder}</Text>
+              </View>
+              <View style={styles.optionsContainer}>
+                <ScrollView 
+                  style={styles.optionsList}
+                  showsVerticalScrollIndicator={true}
+                >
+                  {options.map((option) => (
+                    <TouchableOpacity
+                      key={option}
+                      style={[
+                        styles.optionItem,
+                        selectedValue === option && styles.selectedOption
+                      ]}
+                      onPress={() => onSelect(option)}
+                    >
+                      <Text style={[
+                        styles.optionText,
+                        selectedValue === option && styles.selectedOptionText
+                      ]}>
+                        {option}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                <View style={styles.scrollIndicator}>
+                  <Text style={styles.scrollIndicatorText}>▼ スクロールして続きを表示 ▼</Text>
+                </View>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.scrollViewContent}>
@@ -128,56 +196,53 @@ export default function ExploreScreen() {
 
           <View style={styles.formContainer}>
             <TouchableOpacity
-              onPress={() => setIsPrefectureAccordionOpen(!isPrefectureAccordionOpen)}
-              style={styles.accordionHeader}
+              onPress={() => setPrefectureModalVisible(true)}
+              style={styles.dropdownButton}
             >
-              <Text style={styles.label}>
-                {formData.prefecture ? formData.prefecture : "都道府県を選択してください ▼"} 
+              <Text style={styles.dropdownButtonText}>
+                {formData.prefecture || "都道府県を選択してください"}
               </Text>
+              <Text style={styles.dropdownIcon}>▼</Text>
             </TouchableOpacity>
-            <Collapsible collapsed={!isPrefectureAccordionOpen}>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.prefecture}
-                  onValueChange={handlePrefectureChange}
-                  mode={Platform.OS === "ios" ? "dialog" : "dropdown"}
-                  style={styles.picker}
-                  itemStyle={styles.pickerItem}
-                >
-                  <Picker.Item label="都道府県を選択" value="" />
-                  {prefectures.map((pref) => (
-                    <Picker.Item key={pref} label={pref} value={pref} />
-                  ))}
-                </Picker>
-              </View>
-            </Collapsible>
+
+            <CustomDropdown
+              isVisible={isPrefectureModalVisible}
+              onClose={() => setPrefectureModalVisible(false)}
+              options={prefectures}
+              onSelect={handlePrefectureChange}
+              placeholder="都道府県を選択"
+              selectedValue={formData.prefecture}
+            />
 
             <TouchableOpacity
-              onPress={() => setIsCityAccordionOpen(!isCityAccordionOpen)}
-              style={styles.accordionHeader}
+              onPress={() => formData.prefecture && setCityModalVisible(true)}
+              style={[
+                styles.dropdownButton,
+                !formData.prefecture && styles.disabledDropdown
+              ]}
               disabled={!formData.prefecture}
             >
-              <Text style={[styles.label, !formData.prefecture && styles.disabledText]}>
-                {formData.city ? formData.city : "市区町村を選択してください ▼"} 
+              <Text style={[
+                styles.dropdownButtonText,
+                !formData.prefecture && styles.disabledText
+              ]}>
+                {formData.city || "市区町村を選択してください"}
               </Text>
+              <Text style={[
+                styles.dropdownIcon,
+                !formData.prefecture && styles.disabledText
+              ]}>▼</Text>
             </TouchableOpacity>
-            <Collapsible collapsed={!isCityAccordionOpen}>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.city}
-                  onValueChange={handleCityChange}
-                  enabled={!!formData.prefecture}
-                  mode={Platform.OS === "ios" ? "dialog" : "dropdown"}
-                  style={styles.picker}
-                  itemStyle={styles.pickerItem}
-                >
-                  <Picker.Item label="市区町村を選択" value="" />
-                  {availableCities.map((city) => (
-                    <Picker.Item key={city} label={city} value={city} />
-                  ))}
-                </Picker>
-              </View>
-            </Collapsible>
+
+            <CustomDropdown
+              isVisible={isCityModalVisible}
+              onClose={() => setCityModalVisible(false)}
+              options={availableCities}
+              onSelect={handleCityChange}
+              placeholder="市区町村を選択"
+              selectedValue={formData.city}
+              disabled={!formData.prefecture}
+            />
 
             <Text style={styles.label}>日付と時間帯 *</Text>
             <TextInput
@@ -264,35 +329,28 @@ const styles = StyleSheet.create({
   disabledText: {
     color: '#999',
   },
-  accordionHeader: {
-    paddingVertical: 12,
-    paddingHorizontal: 5,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    marginBottom: 16,
-    backgroundColor: '#FFF',
+  dropdownButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  pickerContainer: {
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    padding: 12,
     marginBottom: 16,
-    overflow: 'hidden',
-    backgroundColor: '#FFF',
-    height: Platform.OS === 'ios' ? 50 : 50,
-    justifyContent: 'center',
   },
-  picker: {
-    height: Platform.OS === 'ios' ? 216 : 50,
-    width: '100%',
-    backgroundColor: '#FFF',
+  dropdownButtonText: {
+    fontSize: 16,
     color: '#333',
   },
-  pickerItem: {
-    color: '#333',
-    fontSize: 18,
-    backgroundColor: '#FFF',
+  dropdownIcon: {
+    fontSize: 14,
+    color: '#666',
+  },
+  disabledDropdown: {
+    backgroundColor: '#F5F5F5',
+    borderColor: '#E0E0E0',
   },
   input: {
     backgroundColor: "#FFF",
@@ -374,5 +432,71 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    width: '100%',
+    maxHeight: '80%',
+    padding: 0,
+    overflow: 'hidden',
+  },
+  dropdownHeader: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#F8F8F8',
+  },
+  dropdownHeaderText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+  },
+  optionsContainer: {
+    position: 'relative',
+    maxHeight: 300,
+  },
+  optionsList: {
+    maxHeight: 250,
+  },
+  optionItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+    backgroundColor: '#FFF',
+  },
+  optionText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  selectedOption: {
+    backgroundColor: '#F8F8F8',
+  },
+  selectedOptionText: {
+    color: '#FF5A5F',
+    fontWeight: 'bold',
+  },
+  scrollIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  scrollIndicatorText: {
+    textAlign: 'center',
+    color: '#666',
+    fontSize: 12,
   },
 });
