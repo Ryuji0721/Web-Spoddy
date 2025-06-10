@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 12,
     width: '100%',
-    maxHeight: '80%',
+    maxHeight: '90%',
     padding: 0,
     overflow: 'hidden',
   },
@@ -504,16 +504,18 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     position: 'relative',
-    maxHeight: 300,
+    maxHeight: 660,
   },
   optionsList: {
-    maxHeight: 250,
+    maxHeight: 600,
   },
   optionItem: {
     padding: 15,
+    height: 50,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
     backgroundColor: '#FFF',
+    justifyContent: 'center',
   },
   optionText: {
     fontSize: 16,
