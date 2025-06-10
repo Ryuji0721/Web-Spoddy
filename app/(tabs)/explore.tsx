@@ -14,6 +14,8 @@ import {
   Alert,
   Platform,
   Image,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Collapsible from "react-native-collapsible";
@@ -32,10 +34,9 @@ const prefectures = [
 const cities: Record<string, string[]> = {
   北海道: ["札幌市", "函館市", "小樽市"],
   青森県: ["青森市", "弘前市", "八戸市"],
-  東京都: ["千代田区", "中央区", "港区", "新宿区", "渋谷区", "豊島区", "板橋区", "練馬区", "その他"], // 'その他'を追加
+  東京都: ["千代田区", "中央区", "港区", "新宿区", "渋谷区", "豊島区", "板橋区", "練馬区", "その他"],
   大阪府: ["大阪市", "堺市", "岸和田市", "その他"],
-  福岡県: ["福岡市", "北九州市", "久留米市", "大牟田市", "その他"] // 'その他'を追加
-  // 他の都道府県に対応する都市データも追加する
+  福岡県: ["福岡市", "北九州市", "久留米市", "大牟田市", "その他"]
 };
 
 export default function ExploreScreen() {
@@ -146,7 +147,6 @@ export default function ExploreScreen() {
 
     if (!result.canceled) {
       setImages((prevImages) => [...prevImages, result.assets[0].uri]);
-      
     }
   };
 
@@ -192,115 +192,118 @@ export default function ExploreScreen() {
   const availableCities = formData.prefecture ? cities[formData.prefecture] || [] : [];
 
   return (
-    <View style={styles.scrollViewContent}>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>投稿する</Text>
-        </TouchableOpacity>
-
-        <View style={styles.formContainer}>
-          <TouchableOpacity
-            onPress={() => setIsPrefectureAccordionOpen(!isPrefectureAccordionOpen)}
-            style={styles.accordionHeader}
-          >
-            <Text style={styles.label}>
-              {formData.prefecture ? formData.prefecture : "都道府県を選択してください ▼"} 
-            </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.scrollViewContent}>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>投稿する</Text>
           </TouchableOpacity>
-          <Collapsible collapsed={!isPrefectureAccordionOpen}>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={formData.prefecture}
-                onValueChange={handlePrefectureChange}
-                mode={Platform.OS === "ios" ? "dialog" : "dropdown"}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label="都道府県を選択" value="" />
-                {prefectures.map((pref) => (
-                  <Picker.Item key={pref} label={pref} value={pref} />
-                ))}
-              </Picker>
-            </View>
-          </Collapsible>
 
-          <TouchableOpacity
-            onPress={() => setIsCityAccordionOpen(!isCityAccordionOpen)}
-            style={styles.accordionHeader}
-            disabled={!formData.prefecture}
-          >
-            <Text style={[styles.label, !formData.prefecture && styles.disabledText]}>
-              {formData.city ? formData.city : "市区町村を選択してください ▼"} 
-            </Text>
-          </TouchableOpacity>
-          <Collapsible collapsed={!isCityAccordionOpen}>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={formData.city}
-                onValueChange={handleCityChange}
-                enabled={!!formData.prefecture}
-                mode={Platform.OS === "ios" ? "dialog" : "dropdown"}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-              >
-                <Picker.Item label="市区町村を選択" value="" />
-                {availableCities.map((city) => (
-                  <Picker.Item key={city} label={city} value={city} />
-                ))}
-              </Picker>
-            </View>
-          </Collapsible>
-
-          <Text style={styles.label}>日付と時間帯 *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="例: 2025年6月20日 14:00〜16:00"
-            placeholderTextColor="#999"
-            value={formData.dateTime}
-            onChangeText={(text) => handleInputChange("dateTime", text)}
-          />
-
-          <Text style={styles.label}>募集人数 *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="例: 5"
-            placeholderTextColor="#999"
-            keyboardType="numeric"
-            value={formData.participants}
-            onChangeText={(text) => handleInputChange("participants", text.replace(/[^0-9]/g, ""))}
-          />
-
-          <Text style={styles.label}>募集内容 *</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="募集の詳細を記入してください"
-            placeholderTextColor="#999"
-            multiline
-            value={formData.description}
-            onChangeText={(text) => handleInputChange("description", text)}
-          />
-
-          <Text style={styles.label}>写真をアップロード (最大3枚)</Text>
-          <View style={styles.imageContainer}>
-            {images.map((imageUri, index) => (
-              <View key={index} style={styles.imageWrapper}>
-                <Image source={{ uri: imageUri }} style={styles.image} />
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => handleImageRemove(index)}
+          <View style={styles.formContainer}>
+            <TouchableOpacity
+              onPress={() => setIsPrefectureAccordionOpen(!isPrefectureAccordionOpen)}
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.label}>
+                {formData.prefecture ? formData.prefecture : "都道府県を選択してください ▼"} 
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={!isPrefectureAccordionOpen}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.prefecture}
+                  onValueChange={handlePrefectureChange}
+                  mode={Platform.OS === "ios" ? "dialog" : "dropdown"}
+                  style={styles.picker}
+                  itemStyle={styles.pickerItem}
                 >
-                  <Text style={styles.removeButtonText}>×</Text>
-                </TouchableOpacity>
+                  <Picker.Item label="都道府県を選択" value="" />
+                  {prefectures.map((pref) => (
+                    <Picker.Item key={pref} label={pref} value={pref} />
+                  ))}
+                </Picker>
               </View>
-            ))}
-            {images.length < 3 && (
-              <TouchableOpacity style={styles.addButton} onPress={handleImagePick}>
-                <Text style={styles.addButtonText}>写真を追加</Text>
-              </TouchableOpacity>
-            )}
+            </Collapsible>
+
+            <TouchableOpacity
+              onPress={() => setIsCityAccordionOpen(!isCityAccordionOpen)}
+              style={styles.accordionHeader}
+              disabled={!formData.prefecture}
+            >
+              <Text style={[styles.label, !formData.prefecture && styles.disabledText]}>
+                {formData.city ? formData.city : "市区町村を選択してください ▼"} 
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={!isCityAccordionOpen}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.city}
+                  onValueChange={handleCityChange}
+                  enabled={!!formData.prefecture}
+                  mode={Platform.OS === "ios" ? "dialog" : "dropdown"}
+                  style={styles.picker}
+                  itemStyle={styles.pickerItem}
+                >
+                  <Picker.Item label="市区町村を選択" value="" />
+                  {availableCities.map((city) => (
+                    <Picker.Item key={city} label={city} value={city} />
+                  ))}
+                </Picker>
+              </View>
+            </Collapsible>
+
+            <Text style={styles.label}>日付と時間帯 *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="例: 2025年6月20日 14:00〜16:00"
+              placeholderTextColor="#999"
+              value={formData.dateTime}
+              onChangeText={(text) => handleInputChange("dateTime", text)}
+            />
+
+            <Text style={styles.label}>募集人数 *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="例: 5"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+              value={formData.participants}
+              onChangeText={(text) => handleInputChange("participants", text.replace(/[^0-9]/g, ""))}
+            />
+
+            <Text style={styles.label}>募集内容 *</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="募集の詳細を記入してください"
+              placeholderTextColor="#999"
+              multiline
+              value={formData.description}
+              onChangeText={(text) => handleInputChange("description", text)}
+            />
+
+            <Text style={styles.label}>写真をアップロード (最大3枚)</Text>
+            <View style={styles.imageContainer}>
+              {images.map((imageUri, index) => (
+                <View key={index} style={styles.imageWrapper}>
+                  <Image source={{ uri: imageUri }} style={styles.image} />
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => handleImageRemove(index)}
+                  >
+                    <Text style={styles.removeButtonText}>×</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+              {images.length < 3 && (
+                <TouchableOpacity style={styles.addButton} onPress={handleImagePick}>
+                  <Text style={styles.addButtonText}>写真を追加</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
       </View>
+<<<<<<< HEAD
     </View>
 =======
 =======
@@ -524,6 +527,9 @@ export default function ExploreScreen() {
 =======
     </View>
 >>>>>>> 4d74ffd (fix:一旦選べるようにはなった)
+=======
+    </TouchableWithoutFeedback>
+>>>>>>> 0efac4c (fix:画面を触ったら気ボードが閉じるようにした)
   );
 }
 
