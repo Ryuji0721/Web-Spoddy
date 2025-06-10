@@ -37,7 +37,7 @@ export default function App() {
           </Text>
 
           
-
+        {/* プロフィールの画像を選択できるようにしたいかも */}
           {/* 名前入力フィールド */}
           <Text style={styles.label}></Text>
           <TextInput
