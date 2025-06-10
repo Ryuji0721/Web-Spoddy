@@ -1,15 +1,15 @@
 // App.tsx (または App.js)
 
 import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Image } from 'react-native';
-
+  const router = useRouter();
 export default function App() {
   // 入力フィールドの値を管理するState
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   // 送信された名前を表示するためのState
-  const [selfIntroduction, setSelfIntroduction] = useState('');
   const [submittedName, setSubmittedName] = useState('');
 
   // ボタンが押されたときのハンドラ
@@ -76,22 +76,21 @@ export default function App() {
 
 <Text style={styles.label}>自己紹介</Text>
 <TextInput
-          
-            style={styles.selfIntroduction}
-            onChangeText={setSelfIntroduction}
-            value={selfIntroduction}
-            multiline
-            keyboardType="default"
-            autoCapitalize="sentences"
-            autoCorrect={false}
-            returnKeyType="done"
+            style={styles.input}
+            onChangeText={setPassword} // 入力が変更されるたびに`name`ステートを更新
+            value={password}    // `name`ステートの値を表示
+            placeholder="市区町村を選択"
+            keyboardType="default" // デフォルトのキーボード
+            autoCapitalize="words" // 各単語の先頭を大文字に
+            autoCorrect={false}   // 入力中の自動修正を無効に
+            returnKeyType="done"  // キーボードのEnterキーのラベル
           />
 
           {/* 送信ボタン */}
           <View style={{ backgroundColor: '#DE5656', borderRadius: 8 ,  width: '80%' }}>
             <Button
               title="アカウント作成"
-              onPress={handleSubmit} // ボタンが押されたら`handleSubmit`関数を実行
+              onPress={() => router.push('../home?id=1')} // ボタンが押されたら`handleSubmit`関数を実行
               color="#FFFFFF" // ボタンの色 
             />
           </View>
@@ -101,12 +100,6 @@ export default function App() {
             <View style={styles.resultContainer}>
               <Text style={styles.resultText}>送信された名前:</Text>
               <Text style={styles.submittedNameText}>{submittedName}</Text>
-            </View>
-          ) : null}
-{selfIntroduction ? (
-            <View style={styles.resultContainer}>
-              <Text style={styles.resultText}>自己紹介:</Text>
-              <Text style={styles.submittedNameText}>{selfIntroduction}</Text>
             </View>
           ) : null}
         </ScrollView>
@@ -126,7 +119,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1, // コンテンツが少ない場合でもScrollViewがフルサイズになるように
-    paddingTop: '5%',
+    paddingTop: '20%',
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#fff',
@@ -143,9 +136,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     alignSelf: 'flex-start', 
-    paddingLeft: '10%',// ラベルを左寄せに
+    paddingLeft: '10%', // ラベルを左寄せに
     color: '#555',
-    fontWeight: 'bold', // ラベルを太字に
   },
   // linkのスタイル
   link: {
@@ -198,17 +190,4 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: 20,
   },
-    selfIntroduction: {
-        height: 100,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 15,
-        width: '80%',
-        marginBottom: 20,
-        backgroundColor: '#f0f0f0',
-        fontSize: 16,
-        color: '#333',
-        textAlignVertical: 'top', // テキスト入力の開始位置を上に
-    },
 });
