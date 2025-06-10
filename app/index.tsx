@@ -1,9 +1,9 @@
 // App.tsx (または App.js)
 
 import React, { useState } from 'react';
+import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, Image } from 'react-native';
-  const router = useRouter();
+
 export default function App() {
   // 入力フィールドの値を管理するState
   const [name, setName] = useState('');
@@ -20,8 +20,11 @@ export default function App() {
     }
     setSubmittedName(name);
     setName(''); // 入力フィールドをクリア
-    Alert.alert('送信完了', `入力された名前: ${name}`);
+    Alert.alert('送信完了', `入力された名前っっb: ${name}`);
   };
+
+  {/* Use handleSubmit in the button */}
+  {/* Move this code inside the return statement */}
 
   return (
     // キーボードが表示されたときにUIが隠れないように調整
@@ -31,55 +34,44 @@ export default function App() {
     >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>プロフィール設定</Text>
-            {/*プロフィールの画像を選択できるようにしたいかも*/ }
-        <Image source={require('../../assets/images/kumagai.jpg')} style={styles.image} />
+          <Text style={styles.title}>Spoddy</Text>
+          <Text style={[styles.label, { textAlign: 'center' }]}>
+            一緒にスポーツを楽しむ仲間を見つけよう
+          </Text>
 
+          
+        {/* プロフィールの画像を選択できるようにしたいかも */}
           {/* 名前入力フィールド */}
-          <Text style={styles.label}>お名前</Text>
+          <Text style={styles.label}></Text>
           <TextInput
             style={styles.input}
             onChangeText={setName} // 入力が変更されるたびに`name`ステートを更新
             value={name}         // `name`ステートの値を表示
-            placeholder="佐藤 正孝"
+            placeholder="メールアドレス"
             keyboardType="default" // デフォルトのキーボード
             autoCapitalize="words" // 各単語の先頭を大文字に
             autoCorrect={false}   // 入力中の自動修正を無効に
             returnKeyType="done"  // キーボードのEnterキーのラベル
           />
 
-<Text style={styles.label}>都道府県</Text>
-          {/*　都道府県フィールド */}
+          {/* パスワード入力フィールド */}
           <TextInput
             style={styles.input}
             onChangeText={setPassword} // 入力が変更されるたびに`name`ステートを更新
             value={password}    // `name`ステートの値を表示
-            placeholder="都道府県選択"
+            placeholder="パスワード"
             keyboardType="default" // デフォルトのキーボード
             autoCapitalize="words" // 各単語の先頭を大文字に
             autoCorrect={false}   // 入力中の自動修正を無効に
             returnKeyType="done"  // キーボードのEnterキーのラベル
           />
 
- {/*　市区町村フィールド */}
- <Text style={styles.label}>市区町村</Text>
-<TextInput
+          {/* 確認パスワード */}
+          <TextInput
             style={styles.input}
-            onChangeText={setPassword} // 入力が変更されるたびに`name`ステートを更新
-            value={password}    // `name`ステートの値を表示
-            placeholder="市区町村を選択"
-            keyboardType="default" // デフォルトのキーボード
-            autoCapitalize="words" // 各単語の先頭を大文字に
-            autoCorrect={false}   // 入力中の自動修正を無効に
-            returnKeyType="done"  // キーボードのEnterキーのラベル
-          />
-
-<Text style={styles.label}>自己紹介</Text>
-<TextInput
-            style={styles.input}
-            onChangeText={setPassword} // 入力が変更されるたびに`name`ステートを更新
-            value={password}    // `name`ステートの値を表示
-            placeholder="市区町村を選択"
+            onChangeText={setConfirmPassword} // 入力が変更されるたびに`name`ステートを更新
+            value={confirmPassword}         // `name`ステートの値を表示
+            placeholder="確認パスワード"
             keyboardType="default" // デフォルトのキーボード
             autoCapitalize="words" // 各単語の先頭を大文字に
             autoCorrect={false}   // 入力中の自動修正を無効に
@@ -89,9 +81,12 @@ export default function App() {
           {/* 送信ボタン */}
           <View style={{ backgroundColor: '#DE5656', borderRadius: 8 ,  width: '80%' }}>
             <Button
-              title="アカウント作成"
-              onPress={() => router.push('../home?id=1')} // ボタンが押されたら`handleSubmit`関数を実行
-              color="#FFFFFF" // ボタンの色 
+              title="アカウントを登録"
+              onPress={() => {
+                const router = useRouter();
+                router.push({ pathname: '/start/plofileSetting', params: { id: '1' } });
+              }}
+              color="#FFFFFF" // ボタンの色
             />
           </View>
 
@@ -102,8 +97,12 @@ export default function App() {
               <Text style={styles.submittedNameText}>{submittedName}</Text>
             </View>
           ) : null}
+
+          
+        <Text style={styles.link}>アカウントをお持ちの方はこちら</Text>
         </ScrollView>
        
+          
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1, // コンテンツが少ない場合でもScrollViewがフルサイズになるように
-    paddingTop: '20%',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#fff',
@@ -128,16 +127,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 30,
     color: '#DE5656',
   },
   // labelのスタイル
   label: {
     fontSize: 16,
     marginBottom: 8,
-    alignSelf: 'flex-start', 
-    paddingLeft: '10%', // ラベルを左寄せに
+    alignSelf: 'flex-start', // ラベルを左寄せに
+    width: '100%', 
     color: '#555',
+    textAlign: 'center', // 中央寄せ
   },
   // linkのスタイル
   link: {
@@ -183,11 +183,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#28a745',
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginTop: 20,
   },
 });
