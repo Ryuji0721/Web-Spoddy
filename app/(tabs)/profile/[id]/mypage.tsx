@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Button } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, Button, Linking } from 'react-native';
 
 const MyPage = () => {
     return (
@@ -15,9 +15,18 @@ const MyPage = () => {
                     バスケットボールが大好きで、毎週末に友達とプレイしています。新しい友達を作りたいです！
                 </Text>
             </View>
+
             <View style={styles.edit}>
-                    <Button title="情報を編集する" color="white" onPress={() => alert('変更画面はまた今度ね')} />
-            </View>
+            <Button
+                title="設定を開く"
+                color="white"
+                onPress={() => {
+                    Linking.openSettings().catch(() => {
+                        alert('設定画面を開けませんでした');
+                    });
+                }}
+            />
+        </View>
         </ScrollView>
     );
 };
