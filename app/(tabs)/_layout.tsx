@@ -1,14 +1,12 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
-
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -22,48 +20,66 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
           },
           default: {},
         }),
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'ホーム',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'アカウント',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-circle" size={size} color={color} />
+          ),
         }}
       />
-        <Tabs.Screen
+      <Tabs.Screen
         name="login"
         options={{
           title: 'ログイン',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="moon.circle.fill" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="lock-open-variant" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: 'ホーム',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home-heart" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: '募集する',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: '投稿',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="plus-box-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-      name="chat"
-      options={{
-        title: 'チャット',
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name="cat.fill" color={color} />,
-      }}
-    />
-        <Tabs.Screen
-        name="profile"
+        name="chat"
         options={{
-          title: 'プロフィール',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="ant.fill" color={color} />,
+          title: 'チャット',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="chat-processing" size={size} color={color} />
+          ),
         }}
       />
-      
+      <Tabs.Screen
+        name="mypage"
+        options={{
+          title: 'マイページ',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-cog" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

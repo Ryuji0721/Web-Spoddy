@@ -7,7 +7,6 @@ export default function App() {
   // 入力フィールドの値を管理するState
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   // 送信された名前を表示するためのState
   const [submittedName, setSubmittedName] = useState('');
 
