@@ -6,15 +6,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  Platform,
   Image,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
   Modal,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import Collapsible from "react-native-collapsible";
 import * as ImagePicker from "expo-image-picker";
 
 const prefectures = [

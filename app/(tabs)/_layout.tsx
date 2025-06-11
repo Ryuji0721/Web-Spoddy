@@ -31,7 +31,7 @@ export default function TabLayout() {
         options={{
           title: 'アカウント',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="account-circle" size={size} color={color} />
           ),
         }}
       />
@@ -40,7 +40,7 @@ export default function TabLayout() {
         options={{
           title: 'ログイン',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="key-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="lock-open-variant" size={size} color={color} />
           ),
         }}
       />
@@ -49,7 +49,7 @@ export default function TabLayout() {
         options={{
           title: 'ホーム',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="home-heart" size={size} color={color} />
           ),
         }}
       />
@@ -58,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: '投稿',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="plus-circle-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="plus-box-outline" size={size} color={color} />
           ),
         }}
       />
@@ -67,7 +67,7 @@ export default function TabLayout() {
         options={{
           title: 'チャット',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="message-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="chat-processing" size={size} color={color} />
           ),
         }}
       />
@@ -76,7 +76,7 @@ export default function TabLayout() {
         options={{
           title: 'マイページ',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-details-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="account-cog" size={size} color={color} />
           ),
         }}
       />
