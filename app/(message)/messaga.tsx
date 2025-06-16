@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Chat = () => {
   const navigation = useNavigation();
@@ -30,7 +30,7 @@ const Chat = () => {
               default: {},
             }),
       });
-    }, [isInputFocused])
+    }, [isInputFocused, navigation])
   );
 
   const handleSendMessage = () => {
