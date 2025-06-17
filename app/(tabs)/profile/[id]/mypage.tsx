@@ -1,5 +1,6 @@
 import React, { useState } from 'react'; // useStateをインポート
-import { ScrollView, View, Text, StyleSheet, Image, Button, Linking, TextInput } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, Button, Linking, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 const MyPage = () => {
     // 名前と自己紹介の状態を管理
@@ -12,7 +13,12 @@ const MyPage = () => {
     // 編集状態を管理
     const [isEditing, setIsEditing] = useState(false);
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedPrefecture, setSelectedPrefecture] = useState('東京都');
+    const [selectedCity, setSelectedCity] = useState('新宿区');
+
     return (
+        <>
         <ScrollView contentContainerStyle={styles.container}>
             <Image source={require('@/assets/images/kumagai.jpg')} style={styles.Image} />
             <View style={styles.status}>
@@ -24,9 +30,18 @@ const MyPage = () => {
                             onChangeText={setName}
                             placeholder="名前を入力"
                         />
-                        <Text style={styles.bio}>{bio}</Text>
+                        <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+                          <Text style={styles.bio}>{selectedPrefecture}/{selectedCity}</Text>
+                        </TouchableOpacity>
                         <Text style={styles.selfIntroduction}>自己紹介</Text>
-                        <Text style={styles.selfIntroductionMessage}>{selfIntroductionMessage}</Text>
+                        <TextInput
+                            style={[styles.selfIntroductionMessage, { textAlignVertical: 'top' }, styles.input]}
+                            multiline
+                            numberOfLines={4}
+                            value={selfIntroductionMessage}
+                            onChangeText={setSelfIntroductionMessage}
+                            placeholder="自己紹介を入力"
+                        />
                     </>
                 ) : (
                     <>
@@ -40,12 +55,63 @@ const MyPage = () => {
 
             <View style={styles.edit}>
                 <Button
-                    title={isEditing ? '完了' : '名前を編集'}
+                    title={isEditing ? '完了' : '編集'}
                     color="white"
                     onPress={() => setIsEditing((prev) => !prev)}
                 />
             </View>
         </ScrollView>
+        <Modal visible={isModalVisible} transparent={true} animationType="slide">
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>都道府県と市区町村を選択</Text>
+              <Picker
+              style={styles['input']}
+                selectedValue={selectedPrefecture}
+                onValueChange={(itemValue) => {
+                  setSelectedPrefecture(itemValue);
+                  setSelectedCity('');
+                }}
+              >
+                <Picker.Item label="東京都" value="東京都" />
+                <Picker.Item label="大阪府" value="大阪府" />
+                <Picker.Item label="沖縄県" value="沖縄県" />
+              </Picker>
+              <Picker
+                selectedValue={selectedCity}
+                onValueChange={(itemValue) => setSelectedCity(itemValue)}
+              >
+                <Picker.Item label="市区町村を選択" value="" enabled={false} />
+                {selectedPrefecture === '東京都' && (
+                  <>
+                    <Picker.Item label="新宿区" value="新宿区" />
+                    <Picker.Item label="渋谷区" value="渋谷区" />
+                  </>
+                )}
+                {selectedPrefecture === '大阪府' && (
+                  <>
+                    <Picker.Item label="大阪市" value="大阪市" />
+                    <Picker.Item label="堺市" value="堺市" />
+                  </>
+                )}
+                {selectedPrefecture === '沖縄県' && (
+                    <>
+                        <Picker.Item label="那覇市" value="那覇市" />
+                        <Picker.Item label="宜野湾市" value="宜野湾市" />
+                    </>
+                    )}
+              </Picker>
+              <Button
+                title="完了"
+                onPress={() => {
+                  setBio(`${selectedPrefecture}/${selectedCity}`);
+                  setIsModalVisible(false);
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+        </>
     );
 };
 
@@ -119,7 +185,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: '#fff',
     },
-    
+    modalBackground: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      backgroundColor: 'white',
+      padding: 20,
+      borderRadius: 12,
+      width: '80%',
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
 });
 
 export default MyPage;
