@@ -249,7 +249,7 @@ export default function ExploreScreen() {
               onClose={() => setPrefectureModalVisible(false)}
               options={prefectures}
               onSelect={handlePrefectureChange}
-              placeholder="都道府県を選択"
+              placeholder="都道府県を"
               selectedValue={formData.prefecture}
             />
 

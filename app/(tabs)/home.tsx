@@ -1,54 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../lib/firebase'; // Firebase 初期化ファイルの正しいパス
+import React from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { usePostContext } from '../context/PostContext'; // PostContextからデータを取得
 
 type Post = {
   id: string;
-  userName: string;
-  postedAt?: { seconds: number };
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  time: string;
-  participants: number;
-  capacity: number;
+  userName: string; // ユーザー名
+  postedAt: { seconds: number }; // 投稿日時
+  title: string; // タイトル
+  description: string; // 説明
+  location: string; // 場所
+  date: string; // 日付
+  time: string; // 時間
+  participants: number; // 参加人数
+  capacity: number; // 定員
 };
 
 export default function HomeScreen() {
-  const [posts, setPosts] = useState<Post[]>([]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        console.log('Firestoreからデータを取得中...');
-        const querySnapshot = await getDocs(collection(db, 'posts'));
-        console.log('データ取得成功:', querySnapshot.docs.length, '件のドキュメントを取得');
-        const postData = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            userName: data.userName || '不明',
-            postedAt: data.postedAt,
-            title: data.title || 'タイトルなし',
-            description: data.description || '説明なし',
-            location: data.location || '場所不明',
-            date: data.date || '日付不明',
-            time: data.time || '時間不明',
-            participants: data.participants || 0,
-            capacity: data.capacity || 0,
-          };
-        });
-        console.log('取得したデータ:', postData);
-        setPosts(postData);
-      } catch (error) {
-        console.error('投稿の取得に失敗しました:', (error as Error).message);
-        Alert.alert('エラー', `投稿の取得に失敗しました: ${(error as Error).message}`);
-      }
-    };
-    fetchPosts();
-  }, []);
+  const { posts } = usePostContext(); // PostContextから投稿データを取得
 
   if (posts.length === 0) {
     return (
@@ -59,41 +27,44 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {posts.map((post) => (
-        <View style={styles.card} key={post.id}>
+    <FlatList
+      data={posts}
+      renderItem={({ item }: { item: Post }) => ( // Post型を明示
+        <View style={styles.card}>
           <View style={styles.header}>
             <View style={styles.avatar} />
             <View>
-              <Text style={styles.name}>{post.userName}</Text>
+              <Text style={styles.name}>{item.userName}</Text>
               <Text style={styles.date}>
-                投稿日：{post.postedAt?.seconds
-                  ? new Date(post.postedAt.seconds * 1000).toLocaleDateString()
+                投稿日：{item.postedAt?.seconds
+                  ? new Date(item.postedAt.seconds * 1000).toLocaleDateString()
                   : '不明'}
               </Text>
             </View>
           </View>
 
-          <Text style={styles.title}>{post.title}</Text>
-          <Text style={styles.body}>{post.description}</Text>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.body}>{item.description}</Text>
 
           <View style={styles.infoRow}>
-            <Text style={styles.infoItem}>📍 {post.location}</Text>
-            <Text style={styles.infoItem}>📅 {post.date}</Text>
-            <Text style={styles.infoItem}>🕒 {post.time}時</Text>
+            <Text style={styles.infoItem}>📍 {item.location}</Text>
+            <Text style={styles.infoItem}>📅 {item.date}</Text>
+            <Text style={styles.infoItem}>🕒 {item.time}時</Text>
           </View>
 
           <View style={styles.footer}>
             <Text style={styles.participants}>
-              👥 {post.participants}/{post.capacity}人
+              👥 {item.participants}/{item.capacity}人
             </Text>
             <View style={styles.chatButton}>
               <Text style={styles.chatButtonText}>💬 チャットに参加</Text>
             </View>
           </View>
         </View>
-      ))}
-    </ScrollView>
+      )}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.container}
+    />
   );
 }
 
