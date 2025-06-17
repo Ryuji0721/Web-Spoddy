@@ -1,38 +1,56 @@
-import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Button, Linking } from 'react-native';
+import React, { useState } from 'react'; // useStateをインポート
+import { ScrollView, View, Text, StyleSheet, Image, Button, Linking, TextInput } from 'react-native';
 
 const MyPage = () => {
+    // 名前と自己紹介の状態を管理
+    const [name, setName] = useState('ダニエル');
+    const [bio, setBio] = useState('東京都/新宿区');
+    const [selfIntroductionMessage, setSelfIntroductionMessage] = useState(
+        'バスケットボールが大好きで、毎週末に友達とプレイしています。新しい友達を作りたいです！'
+    );
+
+    // 編集状態を管理
+    const [isEditing, setIsEditing] = useState(false);
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Image source={require('@/assets/images/kumagai.jpg')} style={styles.Image} />
             <View style={styles.status}>
-                <Text style={styles.name}>ダニエル</Text>
-                <Text style={styles.bio}>東京都/新宿区</Text>
-                {/* ?ここにプロフィールの詳細や趣味などを追加できます */}
-                {/*<Text style={styles.good}>いいね</Text>*/}
-                <Text style={styles.selfIntroduction}>自己紹介</Text>
-                <Text style={styles.selfIntroductionMessage}>
-                    バスケットボールが大好きで、毎週末に友達とプレイしています。新しい友達を作りたいです！
-                </Text>
+                {isEditing ? (
+                    <>
+                        <TextInput
+                            style={styles.input}
+                            value={name}
+                            onChangeText={setName}
+                            placeholder="名前を入力"
+                        />
+                        <Text style={styles.bio}>{bio}</Text>
+                        <Text style={styles.selfIntroduction}>自己紹介</Text>
+                        <Text style={styles.selfIntroductionMessage}>{selfIntroductionMessage}</Text>
+                    </>
+                ) : (
+                    <>
+                        <Text style={styles.name}>{name}</Text>
+                        <Text style={styles.bio}>{bio}</Text>
+                        <Text style={styles.selfIntroduction}>自己紹介</Text>
+                        <Text style={styles.selfIntroductionMessage}>{selfIntroductionMessage}</Text>
+                    </>
+                )}
             </View>
 
             <View style={styles.edit}>
-            <Button
-                title="設定を開く"
-                color="white"
-                onPress={() => {
-                    Linking.openSettings().catch(() => {
-                        alert('設定画面を開けませんでした');
-                    });
-                }}
-            />
-        </View>
+                <Button
+                    title={isEditing ? '完了' : '名前を編集'}
+                    color="white"
+                    onPress={() => setIsEditing((prev) => !prev)}
+                />
+            </View>
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    Image:{
+    Image: {
         width: '96%',
         height: 372,
         borderTopLeftRadius: 14,
@@ -69,13 +87,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         lineHeight: 30,
     },
-    good: {
-        fontSize: 18,
-        color: '#DE5656',
-        marginBottom: 20,
-    },
     selfIntroduction: {
-        fontSize: 22,/* 36.082% */
+        fontSize: 22, /* 36.082% */
         fontWeight: 'bold',
     },
     selfIntroductionMessage: {
@@ -88,14 +101,25 @@ const styles = StyleSheet.create({
         color: '#333',
         lineHeight: 24,
     },
-    edit:{
+    edit: {
         marginTop: 0,
         backgroundColor: '#DE5656',
         color: '#fff',
         padding: 5,
         borderRadius: 16,
         width: '50%',
-    }
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 6,
+        padding: 10,
+        marginBottom: 12,
+        width: '100%',
+        fontSize: 16,
+        backgroundColor: '#fff',
+    },
+    
 });
 
 export default MyPage;
