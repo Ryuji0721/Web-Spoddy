@@ -3,21 +3,48 @@ import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../lib/firebase'; // Firebase 初期化ファイルの正しいパス
 
+type Post = {
+  id: string;
+  userName: string;
+  postedAt?: { seconds: number };
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  time: string;
+  participants: number;
+  capacity: number;
+};
+
 export default function HomeScreen() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        console.log('Firestoreからデータを取得中...');
         const querySnapshot = await getDocs(collection(db, 'posts'));
-        const postData = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        console.log('データ取得成功:', querySnapshot.docs.length, '件のドキュメントを取得');
+        const postData = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            userName: data.userName || '不明',
+            postedAt: data.postedAt,
+            title: data.title || 'タイトルなし',
+            description: data.description || '説明なし',
+            location: data.location || '場所不明',
+            date: data.date || '日付不明',
+            time: data.time || '時間不明',
+            participants: data.participants || 0,
+            capacity: data.capacity || 0,
+          };
+        });
+        console.log('取得したデータ:', postData);
         setPosts(postData);
       } catch (error) {
-        console.error('投稿の取得に失敗しました:', error);
-        Alert.alert('エラー', '投稿の取得に失敗しました。');
+        console.error('投稿の取得に失敗しました:', (error as Error).message);
+        Alert.alert('エラー', `投稿の取得に失敗しました: ${(error as Error).message}`);
       }
     };
     fetchPosts();
@@ -82,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#888',
   },
   card: {
