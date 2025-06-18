@@ -11,6 +11,8 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
@@ -91,6 +93,7 @@ export default function ExploreScreen() {
     dateTime: "",
     participants: "",
     description: "",
+    title: "",
   });
 
   const [isPrefectureModalVisible, setPrefectureModalVisible] = useState(false);
@@ -133,6 +136,10 @@ export default function ExploreScreen() {
   };
 
   const handleSubmit = () => {
+    if (!formData.title) {
+      Alert.alert("エラー", "募集タイトルを入力してください");
+      return;
+    }
     if (!formData.prefecture) {
       Alert.alert("エラー", "都道府県を選択してください。");
       return;
@@ -163,6 +170,7 @@ export default function ExploreScreen() {
       dateTime: "",
       participants: "",
       description: "",
+      title: "",
     });
     setImages([]);
   };
@@ -226,115 +234,154 @@ export default function ExploreScreen() {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.scrollViewContent}>
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>投稿する</Text>
-          </TouchableOpacity>
-
-          <View style={styles.formContainer}>
-            <TouchableOpacity
-              onPress={() => setPrefectureModalVisible(true)}
-              style={styles.dropdownButton}
-            >
-              <Text style={styles.dropdownButtonText}>
-                {formData.prefecture || "都道府県を選択してください"}
-              </Text>
-              <Text style={styles.dropdownIcon}>▼</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.scrollViewContent}>
+          <View style={styles.container}>
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>投稿する</Text>
             </TouchableOpacity>
-
-            <CustomDropdown
-              isVisible={isPrefectureModalVisible}
-              onClose={() => setPrefectureModalVisible(false)}
-              options={prefectures}
-              onSelect={handlePrefectureChange}
-              placeholder="都道府県を"
-              selectedValue={formData.prefecture}
-            />
-
-            <TouchableOpacity
-              onPress={() => formData.prefecture && setCityModalVisible(true)}
-              style={[
-                styles.dropdownButton,
-                !formData.prefecture && styles.disabledDropdown
-              ]}
-              disabled={!formData.prefecture}
-            >
-              <Text style={[
-                styles.dropdownButtonText,
-                !formData.prefecture && styles.disabledText
-              ]}>
-                {formData.city || "市区町村を選択してください"}
-              </Text>
-              <Text style={[
-                styles.dropdownIcon,
-                !formData.prefecture && styles.disabledText
-              ]}>▼</Text>
-            </TouchableOpacity>
-
-            <CustomDropdown
-              isVisible={isCityModalVisible}
-              onClose={() => setCityModalVisible(false)}
-              options={availableCities}
-              onSelect={handleCityChange}
-              placeholder="市区町村を選択"
-              selectedValue={formData.city}
-              disabled={!formData.prefecture}
-            />
-
-            <Text style={styles.label}>日付と時間帯 *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="例: 2025年6月20日 14:00〜16:00"
-              placeholderTextColor="#999"
-              value={formData.dateTime}
-              onChangeText={(text) => handleInputChange("dateTime", text)}
-            />
-
-            <Text style={styles.label}>募集人数 *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="例: 5"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-              value={formData.participants}
-              onChangeText={(text) => handleInputChange("participants", text.replace(/[^0-9]/g, ""))}
-            />
-
-            <Text style={styles.label}>募集内容 *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="募集の詳細を記入してください"
-              placeholderTextColor="#999"
-              multiline
-              value={formData.description}
-              onChangeText={(text) => handleInputChange("description", text)}
-            />
-
-            <Text style={styles.label}>写真をアップロード (最大3枚)</Text>
-            <View style={styles.imageContainer}>
-              {images.map((imageUri, index) => (
-                <View key={index} style={styles.imageWrapper}>
-                  <Image source={{ uri: imageUri }} style={styles.image} />
-                  <TouchableOpacity
-                    style={styles.removeButton}
-                    onPress={() => handleImageRemove(index)}
-                  >
-                    <Text style={styles.removeButtonText}>×</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-              {images.length < 3 && (
-                <TouchableOpacity style={styles.addButton} onPress={handleImagePick}>
-                  <Text style={styles.addButtonText}>写真を追加</Text>
+            <ScrollView>
+              <View style={styles.formContainer}>
+                <Text style={styles.label}>
+                  募集タイトル{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="代々木公園"
+                  placeholderTextColor="#999"
+                  value={formData.title}
+                  onChangeText={(text) => handleInputChange("title", text)}
+                />
+                <Text style={styles.label}>
+                  都道府県選択{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setPrefectureModalVisible(true)}
+                  style={styles.dropdownButton}
+                >
+                  <Text style={styles.dropdownButtonText}>
+                    {formData.prefecture || "都道府県を選択してください"}
+                  </Text>
+                  <Text style={styles.dropdownIcon}>▼</Text>
                 </TouchableOpacity>
-              )}
-            </View>
+
+                <CustomDropdown
+                  isVisible={isPrefectureModalVisible}
+                  onClose={() => setPrefectureModalVisible(false)}
+                  options={prefectures}
+                  onSelect={handlePrefectureChange}
+                  placeholder="都道府県を選択"
+                  selectedValue={formData.prefecture}
+                />
+
+                <Text style={styles.label}>
+                  市区町村選択{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TouchableOpacity
+                  onPress={() => formData.prefecture && setCityModalVisible(true)}
+                  style={[
+                    styles.dropdownButton,
+                    !formData.prefecture && styles.disabledDropdown
+                  ]}
+                  disabled={!formData.prefecture}
+                >
+                  <Text style={[
+                    styles.dropdownButtonText,
+                    !formData.prefecture && styles.disabledText
+                  ]}>
+                    {formData.city || "市区町村を選択してください"}
+                  </Text>
+                  <Text style={[
+                    styles.dropdownIcon,
+                    !formData.prefecture && styles.disabledText
+                  ]}>▼</Text>
+                </TouchableOpacity>
+
+                <CustomDropdown
+                  isVisible={isCityModalVisible}
+                  onClose={() => setCityModalVisible(false)}
+                  options={availableCities}
+                  onSelect={handleCityChange}
+                  placeholder="市区町村を選択"
+                  selectedValue={formData.city}
+                  disabled={!formData.prefecture}
+                />
+
+                <Text style={styles.label}>
+                  日付と時間帯{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="例: 2025年6月20日 14:00〜16:00"
+                  placeholderTextColor="#999"
+                  value={formData.dateTime}
+                  onChangeText={(text) => handleInputChange("dateTime", text)}
+                />
+
+                <Text style={styles.label}>
+                  募集人数{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="例: 5"
+                  placeholderTextColor="#999"
+                  keyboardType="numeric"
+                  value={formData.participants}
+                  onChangeText={(text) =>
+                    handleInputChange("participants", text.replace(/[^0-9]/g, ""))
+                  }
+                />
+
+                <Text style={styles.label}>
+                  募集内容{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  placeholder="募集の詳細を記入してください"
+                  placeholderTextColor="#999"
+                  multiline
+                  value={formData.description}
+                  onChangeText={(text) => handleInputChange("description", text)}
+                />
+
+                <Text style={styles.label}>
+                  写真をアップロード{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>(最大3枚)</Text>
+                </Text>
+                <View style={styles.imageContainer}>
+                  {images.map((imageUri, index) => (
+                    <View key={index} style={styles.imageWrapper}>
+                      <Image source={{ uri: imageUri }} style={styles.image} />
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => handleImageRemove(index)}
+                      >
+                        <Text style={styles.removeButtonText}>×</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                  {images.length < 3 && (
+                    <TouchableOpacity style={styles.addButton} onPress={handleImagePick}>
+                      <Text style={styles.addButtonText}>写真を追加</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            </ScrollView>
           </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -353,7 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -366,30 +413,30 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   disabledText: {
-    color: '#999',
+    color: "#999",
   },
   dropdownButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFF",
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: "#DDD",
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
   },
   dropdownButtonText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   dropdownIcon: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   disabledDropdown: {
-    backgroundColor: '#F5F5F5',
-    borderColor: '#E0E0E0',
+    backgroundColor: "#F5F5F5",
+    borderColor: "#E0E0E0",
   },
   input: {
     backgroundColor: "#FFF",
@@ -399,7 +446,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   textArea: {
     height: 100,
@@ -474,33 +521,33 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     borderRadius: 12,
-    width: '100%',
-    maxHeight: '90%',
+    width: "100%",
+    maxHeight: "90%",
     padding: 0,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   dropdownHeader: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-    backgroundColor: '#F8F8F8',
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "#F8F8F8",
   },
   dropdownHeaderText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
   },
   optionsContainer: {
-    position: 'relative',
+    position: "relative",
     maxHeight: 660,
   },
   optionsList: {
@@ -510,34 +557,34 @@ const styles = StyleSheet.create({
     padding: 15,
     height: 50,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    backgroundColor: '#FFF',
-    justifyContent: 'center',
+    borderBottomColor: "#F0F0F0",
+    backgroundColor: "#FFF",
+    justifyContent: "center",
   },
   optionText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   selectedOption: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: "#F8F8F8",
   },
   selectedOptionText: {
-    color: '#FF5A5F',
-    fontWeight: 'bold',
+    color: "#FF5A5F",
+    fontWeight: "bold",
   },
   scrollIndicator: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 8,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: "#F0F0F0",
   },
   scrollIndicatorText: {
-    textAlign: 'center',
-    color: '#666',
+    textAlign: "center",
+    color: "#666",
     fontSize: 12,
   },
 });
