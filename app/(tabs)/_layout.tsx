@@ -49,7 +49,7 @@ export default function TabLayout() {
         options={{
           title: 'ホーム',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home-heart" size={size} color={color} />
+            <MaterialCommunityIcons name="home-outline" size={size + 4} color={color} />
           ),
         }}
       />
