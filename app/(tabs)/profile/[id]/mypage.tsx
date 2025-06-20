@@ -1,6 +1,8 @@
 import React, { useState } from 'react'; // useStateをインポート
+import { ImageSourcePropType } from 'react-native';
 import { ScrollView, View, Text, StyleSheet, Image, Button, Linking, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
 
 const MyPage = () => {
     // 名前と自己紹介の状態を管理
@@ -17,10 +19,31 @@ const MyPage = () => {
     const [selectedPrefecture, setSelectedPrefecture] = useState('東京都');
     const [selectedCity, setSelectedCity] = useState('新宿区');
 
+    const [imageUri, setImageUri] = useState<ImageSourcePropType>(
+      require('../../../../assets/images/kumagai.jpg')
+    );
+
+    const handleImagePick = async () => {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setImageUri({ uri: result.assets[0].uri });
+      }
+    };
+
     return (
         <>
         <ScrollView contentContainerStyle={styles.container}>
-            <Image source={require('@/assets/images/kumagai.jpg')} style={styles.Image} />
+            <TouchableOpacity onPress={isEditing ? handleImagePick : undefined} activeOpacity={isEditing ? 0.7 : 1}>
+              <Image source={imageUri} style={styles.Image} />
+              {isEditing && (
+                <Text style={{ textAlign: 'center', marginBottom: 10, color: '#666' }}>画像を変更</Text>
+              )}
+            </TouchableOpacity>
             <View style={styles.status}>
                 {isEditing ? (
                     <>
