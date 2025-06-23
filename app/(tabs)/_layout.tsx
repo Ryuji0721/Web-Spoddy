@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons'; // Ioniconsをインポート
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'; // MaterialCommunityIconsをインポート
 
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -31,7 +32,7 @@ export default function TabLayout() {
         options={{
           title: 'アカウント',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle" size={size} color={color} />
+            <Ionicons name="person-circle-outline" size={size} color={color} />
           ),
         }}
       />
@@ -40,7 +41,7 @@ export default function TabLayout() {
         options={{
           title: 'ログイン',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="lock-open-variant" size={size} color={color} />
+            <Ionicons name="log-in-outline" size={size} color={color} />
           ),
         }}
       />
@@ -49,7 +50,7 @@ export default function TabLayout() {
         options={{
           title: 'ホーム',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home-outline" size={size + 4} color={color} />
+            <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
       />
@@ -58,7 +59,7 @@ export default function TabLayout() {
         options={{
           title: '投稿',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="plus-box-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="send" size={size} color={color} />
           ),
         }}
       />
@@ -67,16 +68,16 @@ export default function TabLayout() {
         options={{
           title: 'チャット',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="chat-processing" size={size} color={color} />
+            <Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="mypage"
+        name="profile/[id]/mypage"
         options={{
           title: 'マイページ',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-cog" size={size} color={color} />
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />
