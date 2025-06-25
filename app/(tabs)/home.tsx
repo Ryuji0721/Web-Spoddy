@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity,} from 'react-native';
 import { usePostContext } from '../context/PostContext'; // PostContextからデータを取得
 
 type Post = {
@@ -32,8 +32,7 @@ export default function HomeScreen() {
       renderItem={({ item }: { item: Post }) => ( // Post型を明示
         <View style={styles.card}>
           <View style={styles.header}>
-            <View style={styles.avatar} />
-            <View>
+            <View style={styles.headerInfo}>
               <Text style={styles.name}>{item.userName}</Text>
               <Text style={styles.date}>
                 投稿日：{item.postedAt?.seconds
@@ -41,6 +40,9 @@ export default function HomeScreen() {
                   : '不明'}
               </Text>
             </View>
+            <TouchableOpacity style={styles.moreButton}>
+              <Text style={styles.moreButtonText}>⋮</Text>
+            </TouchableOpacity>
           </View>
 
           <Text style={styles.title}>{item.title}</Text>
@@ -49,16 +51,16 @@ export default function HomeScreen() {
           <View style={styles.infoRow}>
             <Text style={styles.infoItem}>📍 {item.location}</Text>
             <Text style={styles.infoItem}>📅 {item.date}</Text>
-            <Text style={styles.infoItem}>🕒 {item.time}時</Text>
+            <Text style={styles.infoItem}>🕒 {item.time}</Text>
           </View>
 
           <View style={styles.footer}>
             <Text style={styles.participants}>
               👥 {item.participants}/{item.capacity}人
             </Text>
-            <View style={styles.chatButton}>
+            <TouchableOpacity style={styles.chatButton}>
               <Text style={styles.chatButtonText}>💬 チャットに参加</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -103,8 +105,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#ccc',
     marginRight: 10,
+  },
+  headerInfo: {
+    flex: 1,
   },
   name: {
     fontSize: 16,
@@ -112,6 +116,13 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
+    color: '#888',
+  },
+  moreButton: {
+    padding: 5,
+  },
+  moreButtonText: {
+    fontSize: 18,
     color: '#888',
   },
   title: {
