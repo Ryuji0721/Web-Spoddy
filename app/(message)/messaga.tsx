@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { useLayoutEffect } from 'react';
+import { useRouter } from 'expo-router';
 
 
 
@@ -30,37 +30,28 @@ type Message = {
 
 const Chat = () => {
   const navigation = useNavigation();
-  const { roomName } = useLocalSearchParams(); // ← 追加
+  const router = useRouter();
+  const { roomName: roomNameParam } = useLocalSearchParams();
+  const [roomName, setRoomName] = useState(typeof roomNameParam === 'string' ? roomNameParam : '');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isEditingRoomName, setIsEditingRoomName] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
-      title: roomName || 'チャットルーム',
+      headerTitle: () => (
+        <TouchableOpacity onPress={() => router.push({ pathname: '/messageSetting/messageSetting' })}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+            {roomName || 'チャットルーム'}
+          </Text>
+        </TouchableOpacity>
+      ),
       headerBackTitleVisible: false,
       headerBackTitle: '',
     });
-  }, [navigation, roomName]);
-  <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
-  <Text style={{ fontSize: 14, marginBottom: 4 }}>ルーム名を変更:</Text>
-  <TextInput
-    value={typeof roomName === 'string' ? roomName : ''}
-    // Remove the onChangeText handler as setRoomName is not defined
-    placeholder="ルーム名を入力"
-    style={{
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-    }}
-  />
-</View>
-
-
-
+  }, [navigation, roomName, router]);
 
   const handleSendMessage = () => {
     if (input.trim()) {
@@ -85,7 +76,28 @@ const Chat = () => {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
+            {isEditingRoomName && (
+              <View style={{ padding: 20, backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#ccc' }}>
+                <Text style={{ marginBottom: 5 }}>ルーム名を編集：</Text>
+                <TextInput
+                  value={roomName}
+                  onChangeText={setRoomName}
+                  autoFocus
+                  onSubmitEditing={() => setIsEditingRoomName(false)}
+                  onBlur={() => setIsEditingRoomName(false)}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 8,
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                  }}
+                />
+              </View>
+            )}
             <Text style={styles.title}>バスケ同好会</Text>
+          
+           
 
             <ScrollView
               style={styles.messageList}
@@ -121,12 +133,12 @@ const Chat = () => {
                 style={styles.input}
                 value={input}
                 onChangeText={setInput}
-                placeholder="メッセージを入力"
+                placeholder="Aa"
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
               />
               <TouchableOpacity onPress={handleSendMessage} style={styles.sendButton}>
-                <FontAwesome name="send" size={20} color="#007AFF" />
+                <FontAwesome name="send" size={25} color="#DE5656" />
               </TouchableOpacity>
             </View>
           </View>
@@ -188,15 +200,17 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 20,
+    borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 8,
+    padding:15,
     marginRight: 10,
     backgroundColor: '#fff',
     height: 40,
+    fontSize: 18,
   },
   sendButton: {
-    padding: 10,
+    padding: 5,
   },
   timestampOutside: {
     fontSize: 10,
