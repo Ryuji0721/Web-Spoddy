@@ -15,15 +15,25 @@ import React, { useState } from 'react'; // useStateをインポート
   import { Picker } from '@react-native-picker/picker';
 
 
- const CustomDropdown = ({ 
-     isVisible, 
-     onClose, 
-     options, 
-     onSelect, 
-     placeholder, 
-     selectedValue,
-     disabled = false 
-   }: CustomDropdownProps) => (
+interface CustomDropdownProps {
+  isVisible: boolean;
+  onClose: () => void;
+  options: string[];
+  onSelect: (option: string) => void;
+  placeholder: string;
+  selectedValue: string;
+  disabled?: boolean;
+}
+
+const CustomDropdown = ({ 
+    isVisible, 
+    onClose, 
+    options, 
+    onSelect, 
+    placeholder, 
+    selectedValue,
+    disabled = false 
+  }: CustomDropdownProps) => (
      <Modal
        visible={isVisible}
        transparent={true}
@@ -42,23 +52,23 @@ import React, { useState } from 'react'; // useStateをインポート
                    style={styles.optionsList}
                    showsVerticalScrollIndicator={true}
                  >
-                   {options.map((option) => (
+                     {options.map((option: string) => (
                      <TouchableOpacity
                        key={option}
                        style={[
-                         styles.optionItem,
-                         selectedValue === option && styles.selectedOption
+                       styles.optionItem,
+                       selectedValue === option && styles.selectedOption
                        ]}
                        onPress={() => onSelect(option)}
                      >
                        <Text style={[
-                         styles.optionText,
-                         selectedValue === option && styles.selectedOptionText
+                       styles.optionText,
+                       selectedValue === option && styles.selectedOptionText
                        ]}>
-                         {option}
+                       {option}
                        </Text>
                      </TouchableOpacity>
-                   ))}
+                     ))}
                  </ScrollView>
                  <View style={styles.scrollIndicator}>
                    <Text style={styles.scrollIndicatorText}>▼ スクロールして続きを表示 ▼</Text>
