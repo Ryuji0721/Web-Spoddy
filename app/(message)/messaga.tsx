@@ -95,7 +95,7 @@ const Chat = () => {
                 />
               </View>
             )}
-            <Text style={styles.title}>バスケ同好会</Text>
+          
           
            
 
