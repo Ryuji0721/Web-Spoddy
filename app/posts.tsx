@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, StyleSheet, ScrollView } from 'react-native';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '../lib/firebase'; // Firebase 初期化ファイル
+import { db } from './lib/firebase'; // Firebaseの設定をインポート
+import { usePostContext } from '../app/context/PostContext'; // PostContextをインポート
 
 export default function PostForm() {
   const [title, setTitle] = useState('');
@@ -10,6 +11,8 @@ export default function PostForm() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [capacity, setCapacity] = useState('');
+
+  const { posts } = usePostContext(); // PostContextから投稿データを取得
 
   const handleSubmit = async () => {
     if (!title || !description || !location || !date || !time || !capacity) {
@@ -29,6 +32,7 @@ export default function PostForm() {
         participants: 1,
         capacity: parseInt(capacity),
       });
+      console.log('投稿が成功しました:', docRef.id); // 成功時のログ
       Alert.alert('投稿が成功しました！', `ドキュメントID: ${docRef.id}`);
       // フォームのリセット
       setTitle('');
@@ -38,7 +42,7 @@ export default function PostForm() {
       setTime('');
       setCapacity('');
     } catch (error) {
-      console.error('投稿に失敗しました:', error);
+      console.error('投稿に失敗しました:', error); // エラー時のログ
       Alert.alert('エラー', '投稿に失敗しました。');
     }
   };

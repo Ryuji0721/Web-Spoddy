@@ -15,6 +15,8 @@ import {
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../lib/firebase"; // Firebase設定をインポート
 
 const prefectures = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -135,44 +137,39 @@ export default function ExploreScreen() {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
-    if (!formData.title) {
-      Alert.alert("エラー", "募集タイトルを入力してください");
-      return;
-    }
-    if (!formData.prefecture) {
-      Alert.alert("エラー", "都道府県を選択してください。");
-      return;
-    }
-    if (!formData.city) {
-      Alert.alert("エラー", "市区町村を選択してください。");
-      return;
-    }
-    if (!formData.dateTime) {
-      Alert.alert("エラー", "日付と時間帯を入力してください。");
-      return;
-    }
-    if (!formData.participants) {
-      Alert.alert("エラー", "募集人数を入力してください。");
-      return;
-    }
-    if (!formData.description) {
-      Alert.alert("エラー", "募集内容を入力してください。");
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.prefecture || !formData.city || !formData.dateTime || !formData.participants || !formData.description) {
+      Alert.alert("エラー", "全ての必須項目を入力してください。");
       return;
     }
 
-    console.log("フォームデータ:", formData);
-    console.log("アップロードされた写真:", images);
-    Alert.alert("募集内容を送信しました！", "データがコンソールに出力されました。");
-    setFormData({
-      prefecture: "",
-      city: "",
-      dateTime: "",
-      participants: "",
-      description: "",
-      title: "",
-    });
-    setImages([]);
+    try {
+      const docRef = await addDoc(collection(db, "posts"), {
+        title: formData.title,
+        prefecture: formData.prefecture,
+        city: formData.city,
+        dateTime: formData.dateTime,
+        participants: parseInt(formData.participants, 10),
+        description: formData.description,
+        images: images,
+        createdAt: serverTimestamp(),
+      });
+      console.log("投稿が成功しました:", docRef.id);
+      Alert.alert("投稿が成功しました！", `ドキュメントID: ${docRef.id}`);
+      // フォームのリセット
+      setFormData({
+        prefecture: "",
+        city: "",
+        dateTime: "",
+        participants: "",
+        description: "",
+        title: "",
+      });
+      setImages([]);
+    } catch (error) {
+      console.error("投稿に失敗しました:", error);
+      Alert.alert("エラー", "投稿に失敗しました。");
+    }
   };
 
   const availableCities = formData.prefecture ? cities[formData.prefecture] || [] : [];
