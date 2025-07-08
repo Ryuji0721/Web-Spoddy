@@ -47,7 +47,10 @@ export default function HomeScreen() {
         <View style={styles.card}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.description}>{item.description}</Text>
-          <Text style={styles.location}>{item.location}</Text>
+          <Text style={styles.location}>開催場所: {item.location || '未設定'}</Text>
+          <Text style={styles.participants}>
+            募集人数: {item.participants || '未設定'}人
+          </Text>
           <Text style={styles.date}>
             投稿日：{item.postedAt?.seconds
               ? new Date(item.postedAt.seconds * 1000).toLocaleDateString()
@@ -95,6 +98,16 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
+    color: 'gray',
+    marginTop: 5,
+  },
+  location: {
+    fontSize: 14,
+    color: 'gray',
+    marginTop: 5,
+  },
+  participants: {
+    fontSize: 14,
     color: 'gray',
     marginTop: 5,
   },
