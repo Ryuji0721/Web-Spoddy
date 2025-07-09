@@ -52,14 +52,14 @@ export default function HomeScreen() {
             募集人数: {item.participants || '未設定'}人
           </Text>
           <Text style={styles.date}>
-  投稿日：{item.postedAt?.seconds
-    ? new Date(item.postedAt.seconds * 1000).toLocaleDateString('ja-JP', {
-        month: 'numeric',
-        day: 'numeric',
-      })
-    : '不明'}
-</Text>
-        </View>
+          投稿日：{item.postedAt?.seconds
+        ? new Date(item.postedAt.seconds * 1000).toLocaleDateString('ja-JP', {
+            month: 'numeric',
+            day: 'numeric',
+          })
+        : '不明'}
+        </Text>
+      </View>
       )}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.container}
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+    paddingTop: 40,
   },
   card: {
     backgroundColor: 'white',
