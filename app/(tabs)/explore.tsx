@@ -139,24 +139,26 @@ export default function ExploreScreen() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.prefecture || !formData.city || !formData.dateTime || !formData.participants || !formData.description) {
-      Alert.alert("エラー", "全ての必須項目を入力してください。");
+    const { title, description, location, dateTime, participants } = formData;
+
+    if (!title || !description || !location || !dateTime || !participants) {
+      Alert.alert('エラー', '全ての項目を入力してください');
       return;
     }
 
     try {
-      const docRef = await addDoc(collection(db, "posts"), {
-        title: formData.title,
-        prefecture: formData.prefecture,
-        city: formData.city,
-        dateTime: formData.dateTime,
-        participants: parseInt(formData.participants, 10),
-        description: formData.description,
-        images: images,
-        createdAt: serverTimestamp(),
+      const docRef = await addDoc(collection(db, 'posts'), {
+        userName: '目黒はるき', // ユーザー名を保存
+        postedAt: serverTimestamp(), // 投稿日を保存
+        title, // タイトルを保存
+        description, // 説明を保存
+        location, // 開催場所を保存
+        dateTime, // 日付と時間を保存
+        participants: 1, // 初期参加人数を保存
+        capacity: parseInt(participants, 10), // 定員を保存
       });
-      console.log("投稿が成功しました:", docRef.id);
-      Alert.alert("投稿が成功しました！", `ドキュメントID: ${docRef.id}`);
+      console.log('投稿が成功しました:', docRef.id);
+      Alert.alert('投稿が成功しました！', `ドキュメントID: ${docRef.id}`);
       // フォームのリセット
       setFormData({
         prefecture: "",
@@ -165,12 +167,12 @@ export default function ExploreScreen() {
         participants: "",
         description: "",
         title: "",
-        location:""
+        location: "",
       });
       setImages([]);
     } catch (error) {
-      console.error("投稿に失敗しました:", error);
-      Alert.alert("エラー", "投稿に失敗しました。");
+      console.error('投稿に失敗しました:', error);
+      Alert.alert('エラー', '投稿に失敗しました。');
     }
   };
 
