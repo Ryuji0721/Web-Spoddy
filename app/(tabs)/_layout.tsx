@@ -38,7 +38,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="../auth/signup"
         options={{
           title: 'アカウント',
           tabBarIcon: ({ color, size }) => (
@@ -47,7 +47,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="login"
+        name="../auth/login"
         options={{
           title: 'ログイン',
           tabBarIcon: ({ color, size }) => (

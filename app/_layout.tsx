@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { PostProvider } from './context/PostContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from './context/AuthContext';
 
 import { Stack } from "expo-router";
 
@@ -18,25 +19,27 @@ export default function RootLayout() {
   }
 
   return (
-    <PostProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
-            headerShown: false,  // デフォルトは非表示
-          }}
-        >
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen
-            name="message"
-            options={{
-              headerShown: true,
-              headerBackVisible: false,
+    <AuthProvider>
+      <PostProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack
+            screenOptions={{
+              headerShown: false,  // デフォルトは非表示
             }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      </ThemeProvider>
-    </PostProvider>
+          >
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen
+              name="message"
+              options={{
+                headerShown: true,
+                headerBackVisible: false,
+              }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        </ThemeProvider>
+      </PostProvider>
+    </AuthProvider>
   );
 }

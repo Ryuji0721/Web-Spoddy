@@ -96,6 +96,7 @@ export default function ExploreScreen() {
     participants: "",
     description: "",
     title: "",
+    location: "", // 開催場所を追加
   });
 
   const [isPrefectureModalVisible, setPrefectureModalVisible] = useState(false);
@@ -138,24 +139,26 @@ export default function ExploreScreen() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.prefecture || !formData.city || !formData.dateTime || !formData.participants || !formData.description) {
-      Alert.alert("エラー", "全ての必須項目を入力してください。");
+    const { title, description, location, dateTime, participants } = formData;
+
+    if (!title || !description || !location || !dateTime || !participants) {
+      Alert.alert('エラー', '全ての項目を入力してください');
       return;
     }
 
     try {
-      const docRef = await addDoc(collection(db, "posts"), {
-        title: formData.title,
-        prefecture: formData.prefecture,
-        city: formData.city,
-        dateTime: formData.dateTime,
-        participants: parseInt(formData.participants, 10),
-        description: formData.description,
-        images: images,
-        createdAt: serverTimestamp(),
+      const docRef = await addDoc(collection(db, 'posts'), {
+        userName: '目黒はるき', // ユーザー名を保存
+        postedAt: serverTimestamp(), // 投稿日を保存
+        title, // タイトルを保存
+        description, // 説明を保存
+        location, // 開催場所を保存
+        dateTime, // 日付と時間を保存
+        participants: 1, // 初期参加人数を保存
+        capacity: parseInt(participants, 10), // 定員を保存
       });
-      console.log("投稿が成功しました:", docRef.id);
-      Alert.alert("投稿が成功しました！", `ドキュメントID: ${docRef.id}`);
+      console.log('投稿が成功しました:', docRef.id);
+      Alert.alert('投稿が成功しました！', `ドキュメントID: ${docRef.id}`);
       // フォームのリセット
       setFormData({
         prefecture: "",
@@ -164,11 +167,12 @@ export default function ExploreScreen() {
         participants: "",
         description: "",
         title: "",
+        location: "",
       });
       setImages([]);
     } catch (error) {
-      console.error("投稿に失敗しました:", error);
-      Alert.alert("エラー", "投稿に失敗しました。");
+      console.error('投稿に失敗しました:', error);
+      Alert.alert('エラー', '投稿に失敗しました。');
     }
   };
 
@@ -239,9 +243,14 @@ export default function ExploreScreen() {
         <View style={styles.scrollViewContent}>
           <View style={styles.container}>
             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-              <Text style={styles.submitButtonText}>投稿する</Text>
+              <Text style={styles.submitButtonText}>投稿</Text>
             </TouchableOpacity>
-            <ScrollView>
+            <ScrollView              
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: 100, // 下部に余白を追加
+              }}>
+ 
               <View style={styles.formContainer}>
                 <Text style={styles.label}>
                   募集タイトル{" "}
@@ -249,7 +258,7 @@ export default function ExploreScreen() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="代々木公園"
+                  placeholder="一緒にバスケを楽しみませんか？"
                   placeholderTextColor="#999"
                   value={formData.title}
                   onChangeText={(text) => handleInputChange("title", text)}
@@ -310,6 +319,17 @@ export default function ExploreScreen() {
                   selectedValue={formData.city}
                   disabled={!formData.prefecture}
                 />
+                <Text style={styles.label}>
+                  開催場所{" "}
+                  <Text style={{ color: "#DB3737", fontWeight: "bold" }}>必須</Text>
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="代々木公園第1バスケコート"
+                  placeholderTextColor="#999"
+                  value={formData.location}
+                  onChangeText={(text) => handleInputChange("location", text)}
+                />
 
                 <Text style={styles.label}>
                   日付と時間帯{" "}
@@ -317,7 +337,7 @@ export default function ExploreScreen() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="例: 2025年6月20日 14:00〜16:00"
+                  placeholder="6月20日 14:00〜16:00"
                   placeholderTextColor="#999"
                   value={formData.dateTime}
                   onChangeText={(text) => handleInputChange("dateTime", text)}
@@ -329,7 +349,7 @@ export default function ExploreScreen() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="例: 5"
+                  placeholder="5人"
                   placeholderTextColor="#999"
                   keyboardType="numeric"
                   value={formData.participants}
@@ -350,6 +370,7 @@ export default function ExploreScreen() {
                   value={formData.description}
                   onChangeText={(text) => handleInputChange("description", text)}
                 />
+
 
                 <Text style={styles.label}>
                   写真をアップロード{" "}
