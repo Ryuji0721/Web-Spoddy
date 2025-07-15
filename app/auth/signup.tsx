@@ -1,34 +1,47 @@
 import React, { useState } from 'react';
-import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { auth } from '../lib/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function App() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [submittedName, setSubmittedName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setError('');
     if (name.trim() === '') {
-      Alert.alert('エラー', 'メールアドレスを入力してください。');
+      setError('メールアドレスを入力してください。');
       return;
     }
     if (password.trim() === '') {
-      Alert.alert('エラー', 'パスワードを入力してください。');
+      setError('パスワードを入力してください。');
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('エラー', 'パスワードが一致しません。');
+      setError('パスワードが一致しません。');
       return;
     }
-
-    setSubmittedName(name);
-    setName('');
-    setPassword('');
-    setConfirmPassword('');
-    Alert.alert('送信完了', `入力されたメールアドレス: ${name}`);
-    router.push({ pathname: '/start/plofileSetting', params: { id: '1' } });
+    setLoading(true);
+    try {
+      // Firebase Authでユーザー作成
+      const userCredential = await createUserWithEmailAndPassword(auth, name, password);
+      setSubmittedName(name);
+      setName('');
+      setPassword('');
+      setConfirmPassword('');
+      setLoading(false);
+      Alert.alert('登録完了', `アカウントが作成されました: ${name}`);
+      router.replace('/auth/login');
+    } catch (error: any) {
+      setLoading(false);
+      setError(error.message || 'アカウント作成に失敗しました');
+    }
   };
 
   return (
@@ -39,9 +52,7 @@ export default function App() {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>Spoddy</Text>
-          <Text style={[styles.label, { textAlign: 'center' }]}>
-            一緒にスポーツを楽しむ仲間を見つけよう
-          </Text>
+          <Text style={[styles.label, { textAlign: 'center' }]}>一緒にスポーツを楽しむ仲間を見つけよう</Text>
 
           <TextInput
             style={styles.input}
@@ -69,8 +80,14 @@ export default function App() {
             secureTextEntry
           />
 
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
           <View style={styles.buttonContainer}>
-            <Button title="アカウントを登録" onPress={handleSubmit} color="#FFFFFF" />
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Button title="アカウントを登録" onPress={handleSubmit} color="#FFFFFF" />
+            )}
           </View>
 
           {submittedName ? (
@@ -80,7 +97,9 @@ export default function App() {
             </View>
           ) : null}
 
-          <Text style={styles.link}>アカウントをお持ちの方はこちら</Text>
+          <TouchableOpacity style={styles.linkButton} onPress={() => router.replace('/auth/login')}>
+            <Text style={styles.linkButtonText}>アカウントをお持ちの方はこちら</Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -120,6 +139,22 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textAlign: 'center',
   },
+  linkButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DE5656',
+    alignItems: 'center',
+  },
+  linkButtonText: {
+    color: '#DE5656',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
   input: {
     height: 50,
     borderColor: '#ddd',
@@ -137,6 +172,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: '80%',
     marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
   },
   resultContainer: {
     marginTop: 30,
@@ -158,4 +196,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#28a745',
   },
-});
+  errorText: {
+    color: '#DE5656',
+    fontSize: 15,
+    marginBottom: 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+}); 

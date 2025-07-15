@@ -3,6 +3,8 @@ import { ImageSourcePropType } from 'react-native';
 import { ScrollView, View, Text, StyleSheet, Image, Button, Linking, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../../../context/AuthContext';
+import { useRouter } from 'expo-router';
 
 const MyPage = () => {
     // 名前と自己紹介の状態を管理
@@ -34,6 +36,9 @@ const MyPage = () => {
         setImageUri({ uri: result.assets[0].uri });
       }
     };
+
+    const { logout } = useAuth();
+    const router = useRouter();
 
     return (
         <>
@@ -81,6 +86,17 @@ const MyPage = () => {
                     title={isEditing ? '完了' : '編集'}
                     color="white"
                     onPress={() => setIsEditing((prev) => !prev)}
+                />
+            </View>
+            {/* Logout Button */}
+            <View style={{ marginTop: 20, width: '50%' }}>
+                <Button
+                    title="ログアウト"
+                    color="#DE5656"
+                    onPress={async () => {
+                        await logout();
+                        router.replace('/auth/login');
+                    }}
                 />
             </View>
         </ScrollView>
