@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { auth } from '../lib/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendEmailVerification, User } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 
 export default function App() {
@@ -10,6 +10,8 @@ export default function App() {
   const [submittedName, setSubmittedName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showVerifyPrompt, setShowVerifyPrompt] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -25,7 +27,14 @@ export default function App() {
     setLoading(true);
     try {
       // Firebase Authでログイン
-      await signInWithEmailAndPassword(auth, name, password);
+      const userCredential = await signInWithEmailAndPassword(auth, name, password);
+      if (userCredential.user && !userCredential.user.emailVerified) {
+        setShowVerifyPrompt(true);
+        setCurrentUser(userCredential.user);
+        setLoading(false);
+        setError('メールアドレスが確認されていません。認証メールを確認してください。');
+        return;
+      }
       setSubmittedName(name);
       setName('');
       setPassword('');
@@ -35,6 +44,13 @@ export default function App() {
     } catch (error: any) {
       setLoading(false);
       setError(error.message || 'ログインに失敗しました');
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (currentUser) {
+      await sendEmailVerification(currentUser);
+      Alert.alert('確認メール再送信', '認証用のメールを再送信しました。メールを確認してください。');
     }
   };
 
@@ -73,6 +89,14 @@ export default function App() {
           />
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          {showVerifyPrompt && (
+            <View style={{ marginTop: 20, alignItems: 'center' }}>
+              <Text style={{ color: '#DE5656', fontWeight: 'bold', marginBottom: 10 }}>
+                メールアドレスが確認されていません。
+              </Text>
+              <Button title="認証メールを再送信" onPress={handleResendVerification} color="#DE5656" />
+            </View>
+          )}
 
           <View style={styles.buttonContainer}>
             {loading ? (
