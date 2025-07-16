@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { auth } from '../lib/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 export default function App() {
   const [name, setName] = useState('');
@@ -31,6 +31,11 @@ export default function App() {
     try {
       // Firebase Authでユーザー作成
       const userCredential = await createUserWithEmailAndPassword(auth, name, password);
+      // Send email verification
+      if (userCredential.user) {
+        await sendEmailVerification(userCredential.user);
+        Alert.alert('確認メール送信', '認証用のメールを送信しました。メールを確認してください。');
+      }
       setSubmittedName(name);
       setName('');
       setPassword('');
