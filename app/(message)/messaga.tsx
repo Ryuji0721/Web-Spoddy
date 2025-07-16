@@ -1,4 +1,16 @@
 import React, { useState, useCallback, useLayoutEffect } from 'react';
+import { db } from '../lib/firebase';
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  serverTimestamp,
+  doc,
+  getDoc
+} from 'firebase/firestore';
+import { useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,19 +31,20 @@ import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useRouter } from 'expo-router';
 
 
-
 type Message = {
   text: string;
   fromMe: boolean;
   senderName: string;
-  timestamp: string;
+  timestamp: any; // Firestoreのタイムスタンプ型を許容
   avatarUrl?: string;
 };
+
+{/* This misplaced code block has been removed */}
 
 const Chat = () => {
   const navigation = useNavigation();
   const router = useRouter();
-  const { roomName: roomNameParam } = useLocalSearchParams();
+  const { roomName: roomNameParam } = useLocalSearchParams(); 
   const [roomName, setRoomName] = useState(typeof roomNameParam === 'string' ? roomNameParam : '');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -53,18 +66,53 @@ const Chat = () => {
     });
   }, [navigation, roomName, router]);
 
-  const handleSendMessage = () => {
-    if (input.trim()) {
-      const newMessage: Message = {
-        text: input,
-        fromMe: true,
-        senderName: '自分',
-        timestamp: new Date().toLocaleTimeString(),
-        avatarUrl: 'https://example.com/avatar.jpg',
-      };
-      setMessages([...messages, newMessage]);
-      setInput('');
+  useEffect(() => {
+    const fetchRoomName = async () => {
+      const docRef = doc(db, 'rooms', roomName);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setRoomName(docSnap.data().roomName || roomName);
+      }
+    };
+
+    if (roomName) {
+      fetchRoomName();
     }
+  }, [roomName]);
+
+  useEffect(() => {
+    if (!roomName) return;
+
+    const messagesRef = collection(db, 'rooms', roomName, 'messages');
+    const q = query(messagesRef, orderBy('timestamp', 'asc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map((doc) => {
+        const data = doc.data() as Message;
+        return {
+          ...data,
+          id: doc.id,
+        };
+      });
+      setMessages(msgs);
+    });
+
+    return () => unsubscribe();
+  }, [roomName]);
+
+  const handleSendMessage = async () => {
+    if (!input.trim() || !roomName) return;
+
+    const newMessage = {
+      text: input,
+      senderId: 'user1',
+      senderName: '自分',
+      timestamp: serverTimestamp(),
+      avatarUrl: 'https://example.com/avatar.jpg',
+    };
+
+    await addDoc(collection(db, 'rooms', roomName, 'messages'), newMessage);
+    setInput('');
   };
 
   return (
@@ -95,7 +143,7 @@ const Chat = () => {
                 />
               </View>
             )}
-            <Text style={styles.title}>バスケ同好会</Text>
+          
           
            
 

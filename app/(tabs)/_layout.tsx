@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Slot } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons'; // Ioniconsをインポート
@@ -8,6 +8,16 @@ import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+// app/_layout.tsx
+import { RoomProvider } from '../(message)/context/RoomContext';
+
+export function RootLayout() {
+  return (
+    <RoomProvider>
+      <Slot />
+    </RoomProvider>
+  );
+}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

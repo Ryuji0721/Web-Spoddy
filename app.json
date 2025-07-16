@@ -6,15 +6,21 @@
     "orientation": "portrait",
     "icon": "./assets/images/iconSpoddy.svg",
     "scheme": "spoddy",
+    "splash": {
+      "image": "./assets/images/iconSpoddy.svg",
+      "resizeMode": "contain",
+      "backgroundColor": "#DE5656"
+    },
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.Spoddy"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/iconSpoddy.svg",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#DE5656"
       },
       "edgeToEdgeEnabled": true
     },
@@ -31,7 +37,7 @@
           "image": "./assets/images/iconSpoddy.svg",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#DE5656"
         }
       ]
     ],
