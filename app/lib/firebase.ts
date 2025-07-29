@@ -18,3 +18,4 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 // Firestoreの初期化
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
