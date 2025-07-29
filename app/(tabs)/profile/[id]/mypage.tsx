@@ -89,7 +89,7 @@ const MyPage = () => {
                 />
             </View>
             {/* Logout Button */}
-            <View style={{ marginTop: 20, width: '50%' }}>
+            <View style={{ marginTop: 10, width: '50%' }}>
                 <Button
                     title="ログアウト"
                     color="#DE5656"
@@ -157,7 +157,7 @@ const MyPage = () => {
 const styles = StyleSheet.create({
     Image: {
         width: '96%',
-        height: 372,
+        height: 300,
         borderTopLeftRadius: 14,
         borderTopRightRadius: 14,
         borderBottomLeftRadius: 0,
